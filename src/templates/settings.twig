@@ -1,0 +1,36 @@
+{% import "_includes/forms" as forms %}
+
+<h1>Universal DAM Integrator</h1>
+<h2>Settings</h2>
+
+{{ forms.textField({
+    first: true,
+    label: "DAM Volume Display Name",
+    name: 'volumeDisplayName',
+    value: settings.volumeDisplayName
+}) }}
+
+{{ forms.textField({
+    first: true,
+    label: "API Key",
+    name: 'apiKey',
+    value: settings.apiKey
+}) }}
+
+{{ forms.textField({
+    label: "Authentication Endpoint",
+    name: 'authEndpoint',
+    value: settings.authEndpoint
+}) }}
+
+{{ forms.textField({
+    label: "Retrieve All Assets Endpoint",
+    name: 'retrieveAllAssetsEndpoint',
+    value: settings.retrieveAllAssetsEndpoint
+}) }}
+
+{{ forms.textField({
+    label: "Retrieve One Asset Endpoint",
+    name: 'retrieveOneAssetEndpoint',
+    value: settings.retrieveOneAssetEndpoint
+}) }}
