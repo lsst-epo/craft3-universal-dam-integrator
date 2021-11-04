@@ -355,9 +355,7 @@ class Elements extends ElementsService {
             $assetAfterSaver->setAsset($element);
 
             $assetAfterSaver->afterSave($isNewElement);
-            echo "\n\n Rosas - after ...->afterSave()\n\n";
-            //$element->afterSave($isNewElement);
-            $propagate = false; // rosas
+            $propagate = false; // Rosas - Disabling propagation for now
 
             // Update the element across the other sites?
             if ($propagate) {
@@ -419,7 +417,7 @@ class Elements extends ElementsService {
         }
 
         // Update search index
-        $updateSearchIndex = false; //rosas
+        $updateSearchIndex = false; // Rosas - disabling the updating of the search index for now
         if ($updateSearchIndex && !ElementHelper::isRevision($element)) {
             $event = new ElementEvent([
                 'element' => $element,

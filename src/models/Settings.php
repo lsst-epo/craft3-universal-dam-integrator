@@ -16,7 +16,6 @@ class Settings extends Model
     {
         return [
             [['authEndpoint', 'apiKey', 'retrieveAllAssetsEndpoint', 'retrieveOneAssetEndpoint', 'volumeDisplayName'], 'required'],
-            // ...
         ];
     }
 }

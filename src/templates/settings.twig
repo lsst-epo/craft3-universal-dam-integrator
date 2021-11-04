@@ -1,5 +1,7 @@
 {% import "_includes/forms" as forms %}
 
+{% set retrievedElement = "blah" %}
+
 <h1>Universal DAM Integrator</h1>
 <h2>Settings</h2>
 
@@ -34,3 +36,10 @@
     name: 'retrieveOneAssetEndpoint',
     value: settings.retrieveOneAssetEndpoint
 }) }}
+
+
+
+<button onClick="{% do craft.metaSave.testMetaSave() %}" class="btn">Test Meta Save</button>
+<button onClick="{% set retrievedElement = craft.metaSave.testAssetQuery() %}; return false;" class="btn">Test Meta Save</button>
+
+<div>Retrieved Asset's Filename: {{ retrievedElement }}</div>

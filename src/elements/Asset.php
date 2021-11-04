@@ -6,9 +6,7 @@ use Craft;
 use craft\records\Asset as AssetRecord;
 use craft\base\ElementInterface;
 use craft\base\Element;
-//use craft\elements\Asset as AssetClass;
 
-//class Asset extends AssetClass {
 class Asset extends Element {
 
     /**
@@ -164,12 +162,6 @@ class Asset extends Element {
      */
     private $_oldVolumeId;
 
-
-    /**
-     * @inheritdoc
-     * @throws Exception if the asset isn't new but doesn't have a row in the `assets` table for some reason
-     */
-
     public function __construct() {
         parent::__construct();
     }
@@ -202,11 +194,6 @@ class Asset extends Element {
                 Image::cleanImageByPath($this->tempFilePath);
             }
 
-            // Relocate the file?
-            // if ($this->element->newLocation !== null || $this->element->tempFilePath !== null) {
-            //     $this->_relocateFile();
-            // }
-
             // Get the asset record
             if (!$isNew) {
                 $record = AssetRecord::findOne($this->$element->id);
@@ -230,25 +217,9 @@ class Asset extends Element {
             $record->height = (int)$this->_height ?: null;
             $record->dateModified = $this->element->dateModified;
 
-            echo "\n\n record->filename : " . $record->filename . "\n\n";
-
-            // if ($this->getHasFocalPoint()) {
-            //     echo "\n\n Rosas - inside getHasFocalPoint() IF check\n\n";
-            //     $focal = $this->getFocalPoint();
-            //     $record->focalPoint = number_format($focal['x'], 4) . ';' . number_format($focal['y'], 4);
-            // } else {
-            //     echo "\n\n Rosas - NOT in the getHasFocalPoint() check, in the ELSE\n\n";
-            //     $record->focalPoint = null;
-            // }
-
             $record->save(false);
         }
-
-        //$el = new Element();
-        echo "\n\n Rosas - before parent::afterSave\n\n";        
         parent::afterSave($isNew);
-        //$el->afterSave($isNew);
-
     }
 
 }
