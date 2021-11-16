@@ -1,6 +1,7 @@
 {% import "_includes/forms" as forms %}
 
-{% set retrievedElement = "blah" %}
+{# {% set retrievedElement = "blah" %} #}
+{% set authToken = "blah" %}
 
 <h1>Universal DAM Integrator</h1>
 <h2>Settings</h2>
@@ -40,6 +41,8 @@
 
 
 <button onClick="{% do craft.metaSave.testMetaSave() %}" class="btn">Test Meta Save</button>
-<button onClick="{% set retrievedElement = craft.metaSave.testAssetQuery() %}; return false;" class="btn">Test Meta Save</button>
+<button onClick="{% set authToken = craft.metaSave.testAuth() %}" class="btn">Test Auth Token Retrieval</button>
+{# <button onClick="{% set retrievedElement = craft.metaSave.testAssetQuery() %}; return false;" class="btn">Test Meta Query</button> #}
 
-<div>Retrieved Asset's Filename: {{ retrievedElement }}</div>
+<div>Retrieved Asset's JSON: {{ authToken }}</div>
+{# <div>Retrieved Asset's Filename: {{ retrievedElement }}</div> #}
