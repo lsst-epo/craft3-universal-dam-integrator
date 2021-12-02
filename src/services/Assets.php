@@ -47,8 +47,6 @@ class Assets extends Component
 
 
         $newAsset->filename = $this->assetMetadata["name"];
-        //$newAsset->setWidth($this->assetMetadata["metadata"]["Image Width"]);
-        //$newAsset->setHeight($this->assetMetadata["metadata"]["Image Height"]);
         $newAsset->setWidth(100);
         $newAsset->width = 100;
         $newAsset->size = $this->assetMetadata["metadata"]["Asset Data Size (Long)"];
@@ -57,7 +55,7 @@ class Assets extends Component
         $newAsset->kind = "extImage({$this->assetMetadata["id"]})";
         $newAsset->firstSave = true;
         $newAsset->propagateAll = false; //changed from true for debugging purposes
-        // $newAsset->uid = "Eric-Rosas";
+
 
 
 
@@ -126,8 +124,6 @@ class Assets extends Component
         }
     }
 
-//https://rubin.canto.com/api/v1/image/kub3e2sqgl43h6els344790819
-
     /**
      *  Private function for using the app ID and secret key to get an auth token
      */ 
@@ -155,21 +151,4 @@ class Assets extends Component
         
     }
 
-    //$response = $client->post('https://rubin.canto.com/api/v1/image/kub3e2sqgl43h6els344790819', ["Authorization" => "Bearer " . $authToken]);
-
-    // public function testAssetQuery() {
-    //     return Craft::$app->getElements()->getElementById(1409);
-    // }
-
-    // $client = Craft::createGuzzleClient();
-    // if(isset($authToken)) {
-    //     $response = $client->post('https://rubin.canto.com/api/v1/image/kub3e2sqgl43h6els344790819', ["Authorization" => "Bearer " . $authToken]);
-    //     $body = $response->getBody();
-
-    //     //Depending on the API...
-    //     $authToken = Json::decodeIfJson($body)->accessToken;
-    //     return $body;
-    // } else {
-    //     return "hi";
-    // }
 }

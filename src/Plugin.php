@@ -17,7 +17,7 @@ class Plugin extends \craft\base\Plugin
 
     public $hasCpSettings = true;
 
-    public function __contruct($id, $parent = null, array $config = []) {
+    public function __construct($id, $parent = null, array $config = []) {
         $config["components"] = [
             'assets' => Assets::class
         ];
