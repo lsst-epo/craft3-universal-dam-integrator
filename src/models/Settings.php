@@ -6,16 +6,16 @@ use craft\base\Model;
 
 class Settings extends Model
 {
-    public $authEndpoint = '';
-    public $apiKey = '';
-    public $retrieveAllAssetsEndpoint = '';
-    public $retrieveOneAssetEndpoint = '';
-    public $volumeDisplayName = '';
+    
+    public $appId;
+    public $secretKey;
+    public $authEndpoint;
+    public $retrieveAssetMetadataEndpoint;
 
     public function rules()
     {
         return [
-            [['authEndpoint', 'apiKey', 'retrieveAllAssetsEndpoint', 'retrieveOneAssetEndpoint', 'volumeDisplayName'], 'required'],
+            [['authEndpoint', 'appId', 'secretKey', 'retrieveAssetMetadataEndpoint'], 'required'],
         ];
     }
 }

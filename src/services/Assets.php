@@ -6,63 +6,170 @@ use yii\base\Component;
 use craft\elements\Asset;
 use rosas\dam\services\Elements;
 use craft\helpers\Json;
+use craft\events\GetAssetThumbUrlEvent;
 
 class Assets extends Component
 {
 
-    private static $appId = getenv("CANTO_APP_ID");
+    private $authToken;
 
-    private static $secretKey = getenv("CANTO_SECRET_KEY");
+    private $assetMetadata;
 
+    public function __construct() {
+        $this->authToken = '';
+        $this->assetMetadata = '';
+    }
 
     public function init() {
         parent::init();
     }
 
     public function testMetaSave() {
+        // Ensure settings are saved before attempting any requests
+        if(isset(\rosas\dam\Plugin::getInstance()->getSettings()->retrieveAssetMetadataEndpoint) &&
+           isset(\rosas\dam\Plugin::getInstance()->getSettings()->authEndpoint) &&
+           isset(\rosas\dam\Plugin::getInstance()->getSettings()->secretKey) &&
+           isset(\rosas\dam\Plugin::getInstance()->getSettings()->appId)) {
+            $this->authToken = $this->getAuthToken();
+            $this->assetMetadata = $this->getAssetMetadata();
+            return $this->saveAssetMetadata();
+        } else {
+            return null;
+        }
+        
+    }
+
+    private function saveAssetMetadata() {
         // Test saving a brand new asset
         $newAsset = new Asset();
         $newAsset->avoidFilenameConflicts = true;
         $newAsset->setScenario(Asset::SCENARIO_CREATE);
 
 
-        $newAsset->filename = "this-came-from-the-plugin.png";
+        $newAsset->filename = $this->assetMetadata["name"];
+        //$newAsset->setWidth($this->assetMetadata["metadata"]["Image Width"]);
+        //$newAsset->setHeight($this->assetMetadata["metadata"]["Image Height"]);
+        $newAsset->setWidth(100);
+        $newAsset->width = 100;
+        $newAsset->size = $this->assetMetadata["metadata"]["Asset Data Size (Long)"];
         $newAsset->folderId = 17;
         $newAsset->setVolumeId(6); 
-        $newAsset->kind = "image";
+        $newAsset->kind = "extImage({$this->assetMetadata["id"]})";
         $newAsset->firstSave = true;
         $newAsset->propagateAll = false; //changed from true for debugging purposes
+        // $newAsset->uid = "Eric-Rosas";
 
 
 
         $elements = new Elements();
-        // Don't validate required custom fields
-        //$success = $elements->saveElement($newAsset, false);
-        //echo "\n\n Rosas - success : " . $success . "\n\n";
+        $success = $elements->saveElement($newAsset, false, true, false);
+        return $success;
+    }
 
+    /**
+     * Handle responding to EVENT_GET_ASSET_THUMB_URL events
+     *
+     * @param GetAssetThumbUrlEvent $event
+     *
+     * @return null|string
+     */
+    public function handleGetAssetThumbUrlEvent(GetAssetThumbUrlEvent $event)
+    {
+        Craft::beginProfile('handleGetAssetThumbUrlEvent', __METHOD__);
+        $url = $event->url;
+        $asset = $event->asset;
+        if($asset->kind != "image") {
+            $parsedKey = substr($asset->kind, 9);
+            $parsedKey = str_replace(")", "", $parsedKey);
+
+            $this->authToken = $this->getAuthToken();
+            $client = Craft::createGuzzleClient();
+            $getAssetMetadataEndpoint = \rosas\dam\Plugin::getInstance()->getSettings()->retrieveAssetMetadataEndpoint;
+            try {
+                $bearerToken = "Bearer {$this->authToken}";
+                $response = $client->request("GET", $getAssetMetadataEndpoint, ['headers' => ["Authorization" => $bearerToken]]);
+                $body = $response->getBody();
+        
+                //Depending on the API...
+                $url = Json::decodeIfJson($body)["url"]["directUrlPreview"];
+            } catch (Exception $e) {
+                return $e;
+            }
+
+        }
+        Craft::endProfile('handleGetAssetThumbUrlEvent', __METHOD__);
+
+        return $url;
 
     }
 
     /**
-     * Test harness function for authenticating (grabbing an auth token)
-     * from the Canto API
+     * Get asset metadata
      */ 
-    public function testAuth() {
-        // https://docs.guzzlephp.org/en/stable/quickstart.html
-        $client = Craft::createGuzzleClient([
-        'base_uri' => 'https://oauth.canto.com',
-        ]);
+    private function getAssetMetadata() {
+        $client = Craft::createGuzzleClient();
+        $getAssetMetadataEndpoint = \rosas\dam\Plugin::getInstance()->getSettings()->retrieveAssetMetadataEndpoint;
 
-        $response = $client->post('/oauth/api/oauth2/token?app_id=' . $appId . '&app_secret=' . $secretKey , '&grant_type=client_credentials');
-        $body = $response->getBody();
-
-        // Depending on the API...
-        $data = Json::decodeIfJson($body);
-        return $body;
+        if(!isset($this->authToken)) {
+            $this->authToken = $this->getAuthToken();
+        } else {
+            try {
+                $bearerToken = "Bearer {$this->authToken}";
+                $response = $client->request("GET", $getAssetMetadataEndpoint, ['headers' => ["Authorization" => $bearerToken]]);
+                $body = $response->getBody();
+        
+                //Depending on the API...
+                return Json::decodeIfJson($body);
+            } catch (Exception $e) {
+                return $e;
+            }
+        }
     }
 
+//https://rubin.canto.com/api/v1/image/kub3e2sqgl43h6els344790819
+
+    /**
+     *  Private function for using the app ID and secret key to get an auth token
+     */ 
+    private function getAuthToken() : string {
+        $client = Craft::createGuzzleClient();
+        $appId = \rosas\dam\Plugin::getInstance()->getSettings()->appId;
+        $secretKey = \rosas\dam\Plugin::getInstance()->getSettings()->secretKey;
+        $authEndpoint = \rosas\dam\Plugin::getInstance()->getSettings()->authEndpoint;
+
+        // Inject appId if the token is included in the URL
+        $authEndpoint = str_replace("{appId}", $appId, $authEndpoint);
+
+        // Inject secretKey if the token is included in the URL
+        $authEndpoint = str_replace("{secretKey}", $secretKey, $authEndpoint);
+
+        // Get auth token
+        $response = $client->post($authEndpoint);
+        $body = $response->getBody();
+
+        // Extract auth token from response
+        $authTokenDecoded = Json::decodeIfJson($body);
+        $authToken = $authTokenDecoded["accessToken"];
+
+        return $authToken;
+        
+    }
+
+    //$response = $client->post('https://rubin.canto.com/api/v1/image/kub3e2sqgl43h6els344790819', ["Authorization" => "Bearer " . $authToken]);
 
     // public function testAssetQuery() {
     //     return Craft::$app->getElements()->getElementById(1409);
+    // }
+
+    // $client = Craft::createGuzzleClient();
+    // if(isset($authToken)) {
+    //     $response = $client->post('https://rubin.canto.com/api/v1/image/kub3e2sqgl43h6els344790819', ["Authorization" => "Bearer " . $authToken]);
+    //     $body = $response->getBody();
+
+    //     //Depending on the API...
+    //     $authToken = Json::decodeIfJson($body)->accessToken;
+    //     return $body;
+    // } else {
+    //     return "hi";
     // }
 }

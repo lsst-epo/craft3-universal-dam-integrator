@@ -9,12 +9,20 @@ use craft\web\twig\variables\CraftVariable;
 use rosas\dam\volumes\DAMVolume;
 use rosas\dam\services\Assets;
 use yii\base\Behavior;
+use craft\events\GetAssetThumbUrlEvent;
 
 class Plugin extends \craft\base\Plugin
 {
     public static $plugin;
 
     public $hasCpSettings = true;
+
+    public function __contruct($id, $parent = null, array $config = []) {
+        $config["components"] = [
+            'assets' => Assets::class
+        ];
+        parent::__construct($id, $parent, $config);
+    }
 
     public function init()
     {
@@ -34,6 +42,20 @@ class Plugin extends \craft\base\Plugin
             // Attach a service:
             $tag->set('metaSave', services\Assets::class);
         });
+
+        // Handler: Assets::EVENT_GET_ASSET_THUMB_URL
+        Event::on(
+            \craft\services\Assets::class,
+            \craft\services\Assets::EVENT_GET_ASSET_THUMB_URL,
+            function (GetAssetThumbUrlEvent $event) {
+                Craft::debug(
+                    '\craft\services\Assets::EVENT_GET_ASSET_THUMB_URL',
+                    __METHOD__
+                );
+                // Return the URL to the asset URL or null to let Craft handle it
+                $event->url = Plugin::$plugin->assets->handleGetAssetThumbUrlEvent($event);
+            }
+        );
     }
 
     protected function settingsHtml() {
