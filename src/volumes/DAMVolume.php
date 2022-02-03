@@ -15,12 +15,18 @@ use craft\base\Volume;
 
 class DAMVolume extends Volume
 {
+
+    public $quickTest = "eric";
+
+    public function init() {
+        parent::init();
+    }
     /**
      * @inheritdoc
      */
     public static function displayName(): string
     {
-        return 'XXX'; // return display name from settings
+        return 'Canto DAM'; // return display name from settings
     }
 
     /**
@@ -38,6 +44,8 @@ class DAMVolume extends Volume
         // }
         parent::__construct($config);
     }
+
+
     
     /**
      * @inheritdoc
@@ -63,24 +71,25 @@ class DAMVolume extends Volume
     public function rules()
     {
         $rules = parent::rules();
-        // copied over from GCS plugin:
-        // $rules[] = [['bucket', 'projectId'], 'required'];
-
         return $rules;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getSettingsHtml()
-    {
-        // copied over from GCS plugin:
-        // return Craft::$app->getView()->renderTemplate('google-cloud/volumeSettings', [
-        //     'volume' => $this,
-        //     'periods' => array_merge(['' => ''], Assets::periodList()),
-        // ]);
-        return false;
-    }
+    // /**
+    //  * @inheritdoc
+    //  */
+    // public function getSettingsHtml()
+    // {
+    //     // copied over from GCS plugin:
+    //     // return Craft::$app->getView()->renderTemplate('google-cloud/volumeSettings', [
+    //     //     'volume' => $this,
+    //     //     'periods' => array_merge(['' => ''], Assets::periodList()),
+    //     // ]);
+    //     // return false;
+    //     return Craft::$app->getView()->renderTemplate('universal-dam-integrator/settings', [
+    //         'volume' => "eric rosas",
+    //         'rosas' => $this->$tester
+    //     ]);
+    // }
 
     /**
      * @inheritdoc
@@ -143,13 +152,14 @@ class DAMVolume extends Volume
      */
     protected function createAdapter()
     {
-        $config = $this->_getConfigArray();
+        // $config = $this->_getConfigArray();
 
-        $client = static::client($config);
-        $bucket = $client->bucket(Craft::parseEnv($this->bucket));
+        // $client = static::client($config);
+        // $bucket = $client->bucket(Craft::parseEnv($this->bucket));
 
-        // return new GoogleStorageAdapter($client, $bucket, $this->_subfolder() ?: null);
-        return false;
+        // // return new GoogleStorageAdapter($client, $bucket, $this->_subfolder() ?: null);
+        // return false;
+        return parent::createAdapter();
     }
 
     /**
@@ -172,4 +182,57 @@ class DAMVolume extends Volume
 
         return parent::addFileMetadataToConfig($config);
     }
+
+    // Beginning of inherited class declaration
+
+    public function getFileMetadata(string $uri): array {
+        return parent::getFileSize($uri);
+    }
+
+    public function getFileSize(string $uri): ?int {
+        return parent::getFileSize($uri);
+    }
+
+    public function getDateModified(string $uri): ?int {
+        return parent::getDateModified($uri);
+    }
+
+    public function createFileByStream(string $path, $stream, array $config) {
+        return parent::createFileByStream($path, $stream, $config);
+    }
+
+    public function updateFileByStream(string $path, $stream, array $config) {
+        return parent::updateFileByStream($path, $stream, $config);
+    }
+
+    public function fileExists(string $path): bool {
+        return parent::fileExists($path);
+    }
+
+    public function deleteFile(string $path) {
+        return parent::deleteFile($path);
+    }
+
+    public function renameFile(string $path, string $newPath) {
+        return parent::renameFile($path, $newPath);
+    }
+
+    public function copyFile(string $path, string $newPath) {
+        return parent::copyFile($path, $newPath);
+    }
+
+    public function saveFileLocally(string $uriPath, string $targetPath): int {
+        return parent::saveFileLocally($uriPath, $targetPath);
+    }
+
+    public function getFileStream(string $uriPath) {
+        return parent::getFileStream($uriPath);
+    }
+
+    public function getFileList(string $directory, bool $recursive): array {
+        return parent::getFileList($directory, $recursive);
+    }
+
+    // End of inherited class declaration
+
 }

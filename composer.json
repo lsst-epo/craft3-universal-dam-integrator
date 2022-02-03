@@ -4,6 +4,7 @@
     "type": "craft-plugin",
     "keywords": ["dam", "digital", "asset", "manager"],
     "license": "MIT",
+    "version": "0.0.1",
     "authors": [
       {
         "name": "Eric Rosas",
@@ -17,7 +18,7 @@
       "docs": "https://github.com/lsst-epo/craft3-universal-dam-integrator/blob/main/README.md"
     },
     "require": {
-      "craftcms/cms": "^3.1.0"
+      "craftcms/cms": "^3.1.5"
     },
     "autoload": {
       "psr-4": {

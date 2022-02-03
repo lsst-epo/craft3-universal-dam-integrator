@@ -3,6 +3,10 @@
 <h1>Universal DAM Integrator</h1>
 <h2>Settings</h2>
 
+{% if craft.metaSave.getAuthToken(true) != "" %}
+    <div style="border: 1px solid #c78f3a; background-color: #ffd679; border-radius: 3px; padding: 5px 10px 5px 10px; margin-bottom: 20px;"> {{ craft.metaSave.getAuthToken(true) }} </div>
+{% endif %}
+
 {{ forms.textField({
     first: true,
     label: "App ID",
@@ -29,6 +33,21 @@
     name: 'retrieveAssetMetadataEndpoint',
     value: settings.retrieveAssetMetadataEndpoint
 }) }}
-<p>If the app ID or secret key is needed in the URL include it as <strong>{appId}</strong> or <strong>{secretKey}</strong> with no spaces.</p>
 
-<button onClick="{% do craft.metaSave.testMetaSave() %}" class="btn">Test Meta Save</button>
+<div class="field">
+    <div class="heading">
+        <label>Select the Volume to Use as the DAM Interface</label>
+    </div>
+    {{
+        forms.select({
+            label: "Select the Volume to Use as the DAM Interface",
+            name: "damVolume",
+            options: settings.getVolumes(),
+            value: settings.damVolume
+        })
+    }}
+</div>
+
+{{ settings.damVolume }} <br>
+{{ settings.getVolumeId() }}
+<button onClick="{% do craft.metaSave.testMetaSave() %}" class="btn">Test Meta Savez</button>

@@ -6,6 +6,7 @@ use Craft;
 use craft\records\Asset as AssetRecord;
 use craft\base\ElementInterface;
 use craft\base\Element;
+use rosas\dam\Plugin;
 
 class Asset extends Element {
 
@@ -205,10 +206,13 @@ class Asset extends Element {
                 $record = new AssetRecord();
                 $record->id = (int)$this->element->id;
              }
+             // Craft::$app->getVolumes()->getVolumeByHandle($handle)
 
+            $damVol = \rosas\dam\Plugin::getInstance()->settings->damVolume;
 
             $record->filename = $this->element->filename;
-            $record->volumeId = $this->element->getVolumeId();
+            //$record->volumeId = $this->element->getVolumeId();
+            $record->volumeId = Craft::$app->getVolumes()->getVolumeByHandle($damVol)["id"];
             $record->folderId = (int)$this->element->folderId;
             $record->uploaderId = (int)$this->element->uploaderId ?: null;
             $record->kind = $this->element->kind;

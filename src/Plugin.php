@@ -56,6 +56,15 @@ class Plugin extends \craft\base\Plugin
                 $event->url = Plugin::$plugin->assets->handleGetAssetThumbUrlEvent($event);
             }
         );
+
+        // Register DAM remote volume type
+        Event::on(
+            Volumes::class,
+            Volumes::EVENT_REGISTER_VOLUME_TYPES,
+                function(RegisterComponentTypesEvent $event) {
+                $event->types[] = DAMVolume::class;
+            }
+        );
     }
 
     protected function settingsHtml() {
