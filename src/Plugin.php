@@ -8,8 +8,10 @@ use yii\base\Event;
 use craft\web\twig\variables\CraftVariable;
 use rosas\dam\volumes\DAMVolume;
 use rosas\dam\services\Assets;
+use craft\services\Assets as CraftAssets;
 use yii\base\Behavior;
 use craft\events\GetAssetThumbUrlEvent;
+use craft\events\GetAssetUrlEvent;
 
 class Plugin extends \craft\base\Plugin
 {
@@ -65,6 +67,15 @@ class Plugin extends \craft\base\Plugin
                 $event->types[] = DAMVolume::class;
             }
         );
+
+        // Register getAssetUrl event  
+        Event::on(
+            CraftAssets::class,
+            CraftAssets::EVENT_GET_ASSET_URL,
+                function(GetAssetUrlEvent $event) {
+                    $event->url = Plugin::$plugin->assets->getUrl($event);
+                }
+            );
     }
 
     protected function settingsHtml() {

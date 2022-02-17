@@ -50,7 +50,11 @@ class Settings extends Model
     }
 
     public function getVolumeId() {
-        //return print_r(Craft::$app->getVolumes()->getVolumeByHandle($this->damVolume));
-        return Craft::$app->getVolumes()->getVolumeByHandle($this->damVolume)["id"];
+        if($this->damVolume != null) {
+            return Craft::$app->getVolumes()->getVolumeByHandle($this->damVolume)["id"];
+        } else {
+            return null;
+        }
+        
     }
 }

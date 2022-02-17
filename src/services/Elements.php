@@ -15,6 +15,10 @@ use craft\helpers\Db;
 use craft\helpers\DateTimeHelper;
 use craft\records\Element_SiteSettings as Element_SiteSettingsRecord;
 
+use craft\events\ElementEvent;
+use craft\helpers\Queue;
+use craft\queue\jobs\UpdateSearchIndex;
+
 
 class Elements extends ElementsService {
 
@@ -80,6 +84,8 @@ class Elements extends ElementsService {
      */
     public function saveElement(ElementInterface $element, bool $runValidation = true, bool $propagate = true, bool $updateSearchIndex = null): bool
     {
+        Craft::info("maddie - inside saveElement()", "rosas");
+        Craft::info("maddie - height : " . $element->getHeight() . ", width : " . $element->getWidth(), "rosas");
         // Force propagation for new elements
         $propagate = !$element->id || $propagate;
 
@@ -417,7 +423,7 @@ class Elements extends ElementsService {
         }
 
         // Update search index
-        $updateSearchIndex = false; // Rosas - disabling the updating of the search index for now
+        //$updateSearchIndex = false; // Rosas - disabling the updating of the search index for now
         if ($updateSearchIndex && !ElementHelper::isRevision($element)) {
             $event = new ElementEvent([
                 'element' => $element,

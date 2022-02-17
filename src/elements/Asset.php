@@ -2,13 +2,16 @@
 
 namespace rosas\dam\elements;
 
+use \Datetime;
 use Craft;
 use craft\records\Asset as AssetRecord;
 use craft\base\ElementInterface;
 use craft\base\Element;
+use craft\elements\Asset as AssetElement;
 use rosas\dam\Plugin;
 
 class Asset extends Element {
+//class Asset extends AssetElement {
 
     /**
      * Validation scenario that should be used when the asset is only getting *moved*; not renamed.
@@ -171,6 +174,106 @@ class Asset extends Element {
         $this->element = $el;
     }
 
+        /**
+     * Sets the image width.
+     *
+     * @param int|float|null $width the image width
+     */
+    public function setWidth($width)
+    {
+        Craft::info("maddie - in setWidth()");
+        $this->_width = $width;
+    }
+
+    /**
+     * Sets the image height.
+     *
+     * @param int|float|null $height the image height
+     */
+    public function setHeight($height)
+    {
+        $this->_height = $height;
+    }
+
+        /**
+     * Returns the image width.
+     *
+     * @param AssetTransform|string|array|null $transform A transform handle or configuration that should be applied to the image
+     * @return int|float|null
+     */
+    public function getWidth($transform = null)
+    {
+        return $this->_dimensions($transform)[0];
+    }
+
+        /**
+     * Returns the image height.
+     *
+     * @param AssetTransform|string|array|null $transform A transform handle or configuration that should be applied to the image
+     * @return int|float|null
+     */
+
+    public function getHeight($transform = null)
+    {
+        return $this->_dimensions($transform)[1];
+    }
+
+    /**
+     * Returns the width and height of the image.
+     *
+     * @param AssetTransform|string|array|null $transform
+     * @return array
+     */
+    private function _dimensions($transform = null): array
+    {
+        Craft::info("maddie - inside of _dimensions() functionz!", "rosas");
+        if(substr($asset->kind, 0, 3) != "ext") {
+            Craft::info("maddie - oh no, null/null!", "rosas");
+            return [null, null];
+        }
+
+        if (!$this->_width || !$this->_height) {
+            if ($this->getScenario() !== self::SCENARIO_CREATE) {
+                Craft::warning("maddie - Asset $this->id is missing its width or height", __METHOD__);
+            }
+            Craft::info("maddie - oh no! either height or width is null", "rosas");
+            return [null, null];
+        }
+
+        $transform = $transform ?? $this->_transform;
+
+        if ($transform === null || !Image::canManipulateAsImage($this->getExtension())) {
+            Craft::info("maddie - returning _width: " . $this->_width . ", _height :" . $this->_height, "rosas");
+            return [$this->_width, $this->_height];
+        }
+        Craft::info("maddie - doing other work", "rosas");
+        $transform = Craft::$app->getAssetTransforms()->normalizeTransform($transform);
+
+        // if ($this->_width < $transform->width && $this->_height < $transform->height && !Craft::$app->getConfig()->getGeneral()->upscaleImages) {
+        //     $transformRatio = $transform->width / $transform->height;
+        //     $imageRatio = $this->_width / $this->_height;
+
+        //     if ($transform->mode !== 'crop' || $imageRatio === $transformRatio) {
+        //         return [$this->_width, $this->_height];
+        //     }
+
+        //     return $transformRatio > 1 ? [$this->_width, round($this->_height / $transformRatio)] : [round($this->_width * $transformRatio), $this->_height];
+        // }
+
+        [$width, $height] = Image::calculateMissingDimension($transform->width, $transform->height, $this->_width, $this->_height);
+
+        // Special case for 'fit' since that's the only one whose dimensions vary from the transform dimensions
+        // if ($transform->mode === 'fit') {
+        //     $factor = max($this->_width / $width, $this->_height / $height);
+        //     $width = (int)round($this->_width / $factor);
+        //     $height = (int)round($this->_height / $factor);
+        // }
+        
+        Craft::info("maddie - returning width: " . $width . ", height: " . $height, "rosas");
+        return [$width, $height];
+    }
+
+
     /**
      * Returns the volume’s ID.
      *
@@ -210,18 +313,28 @@ class Asset extends Element {
 
             $damVol = \rosas\dam\Plugin::getInstance()->settings->damVolume;
 
+            //$now = new DateTime(null, new DateTimeZone('America/Phoenix'));
+            $now = new DateTime();
+            // $now->format('Y-m-d H:i:s');    // MySQL datetime format
+            // echo $now->getTimestamp();           // Unix Timestamp -- Since PHP 5.3
+
             $record->filename = $this->element->filename;
             //$record->volumeId = $this->element->getVolumeId();
+            Craft::info("maddie - abouut to log element!", "rosas");
+            Craft::info("maddie - height: " . $this->element->getHeight() . ", width: " . $this->element->getWidth(), "rosas");
+            // Craft::info(print_r($this->element), "rosas");
             $record->volumeId = Craft::$app->getVolumes()->getVolumeByHandle($damVol)["id"];
             $record->folderId = (int)$this->element->folderId;
             $record->uploaderId = (int)$this->element->uploaderId ?: null;
             $record->kind = $this->element->kind;
             $record->size = (int)$this->element->size ?: null;
-            $record->width = (int)$this->_width ?: null;
-            $record->height = (int)$this->_height ?: null;
-            $record->dateModified = $this->element->dateModified;
+            $record->width = (int)$this->element->getWidth() ?: null;;
+            $record->height = (int)$this->element->getHeight() ?: null;;
+            $record->dateModified = $now->format('Y-m-d H:i:s');
 
-            $record->save(false);
+            $tester = $record->save(true);
+            Craft::info("maddie - logging tester: ", "rosas");
+            Craft::info($tester, "rosas");
         }
         parent::afterSave($isNew);
     }

@@ -4,6 +4,8 @@ namespace rosas\dam\volumes;
 
 use Craft;
 use craft\base\Volume;
+use craft\base\FlysystemVolume;
+use League\Flysystem\Filesystem;
 
 /**
  * It's possible this class isn't needed at all, for context:
@@ -14,6 +16,7 @@ use craft\base\Volume;
  */
 
 class DAMVolume extends Volume
+//abstract class DAMVolume extends FlysystemVolume
 {
 
     public $quickTest = "eric";
@@ -97,10 +100,11 @@ class DAMVolume extends Volume
     public function getRootUrl()
     {
         // Copied over from GCS plugin
-        if (($rootUrl = parent::getRootUrl()) !== false) {
-            $rootUrl .= $this->_subfolder();
-        }
-        return $rootUrl;
+        // if (($rootUrl = parent::getRootUrl()) !== false) {
+        //     //$rootUrl .= $this->_subfolder();
+        // }
+        // return $rootUrl;
+        return parent::getRootUrl();
     }
 
     // Likely don't need this function for now:
@@ -150,17 +154,17 @@ class DAMVolume extends Volume
      * @inheritdoc
      * @return GoogleStorageAdapter
      */
-    protected function createAdapter()
-    {
-        // $config = $this->_getConfigArray();
+    // protected function createAdapter()
+    // {
+    //     // $config = $this->_getConfigArray();
 
-        // $client = static::client($config);
-        // $bucket = $client->bucket(Craft::parseEnv($this->bucket));
+    //     // $client = static::client($config);
+    //     // $bucket = $client->bucket(Craft::parseEnv($this->bucket));
 
-        // // return new GoogleStorageAdapter($client, $bucket, $this->_subfolder() ?: null);
-        // return false;
-        return parent::createAdapter();
-    }
+    //     // // return new GoogleStorageAdapter($client, $bucket, $this->_subfolder() ?: null);
+    //     // return false;
+    //     return parent::createAdapter();
+    // }
 
     /**
      * @inheritdoc
@@ -184,6 +188,12 @@ class DAMVolume extends Volume
     }
 
     // Beginning of inherited class declaration
+
+    protected function filesystem(array $config = []): Filesystem
+    {
+        // Constructing a Filesystem is super cheap and we always get the config we want, so no caching.
+        return new Filesystem($this->adapter(), new Config($config));
+    }
 
     public function getFileMetadata(string $uri): array {
         return parent::getFileSize($uri);
