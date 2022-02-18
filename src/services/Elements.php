@@ -12,6 +12,7 @@ use craft\helpers\StringHelper;
 use craft\helpers\ArrayHelper;
 use craft\records\Element as ElementRecord;
 use craft\helpers\Db;
+use craft\helpers\Json;
 use craft\helpers\DateTimeHelper;
 use craft\records\Element_SiteSettings as Element_SiteSettingsRecord;
 
@@ -82,7 +83,7 @@ class Elements extends ElementsService {
      * @throws Exception if the $element doesn’t have any supported sites
      * @throws \Throwable if reasons
      */
-    public function saveElement(ElementInterface $element, bool $runValidation = true, bool $propagate = true, bool $updateSearchIndex = null): bool
+    public function saveElement(ElementInterface $element, bool $runValidation = true, bool $propagate = true, bool $updateSearchIndex = null, $assetMetadata = null): bool
     {
         Craft::info("maddie - inside saveElement()", "rosas");
         Craft::info("maddie - height : " . $element->getHeight() . ", width : " . $element->getWidth(), "rosas");
@@ -93,7 +94,7 @@ class Elements extends ElementsService {
         $duplicateOf = $element->duplicateOf;
         $element->duplicateOf = null;
 
-        $success = $this->_saveElementInternal($element, $runValidation, $propagate, $updateSearchIndex);
+        $success = $this->_saveElementInternal($element, $runValidation, $propagate, $updateSearchIndex, $assetMetadata);
 
         $element->duplicateOf = $duplicateOf;
         return $success;
@@ -112,7 +113,7 @@ class Elements extends ElementsService {
      * @throws UnsupportedSiteException if the element is being saved for a site it doesn’t support
      * @throws \Throwable if reasons
      */
-    private function _saveElementInternal(ElementInterface $element, bool $runValidation = true, bool $propagate = true, bool $updateSearchIndex = null): bool
+    private function _saveElementInternal(ElementInterface $element, bool $runValidation = true, bool $propagate = true, bool $updateSearchIndex = null, $assetMetadata = null): bool
     {
         /** @var ElementInterface|DraftBehavior|RevisionBehavior $element */
         $isNewElement = !$element->id;
@@ -489,6 +490,67 @@ class Elements extends ElementsService {
         $element->markAsClean();
         $element->firstSave = $originalFirstSave;
         $element->propagateAll = $originalPropagateAll;
+
+        // Craft::info($element->id, "rosass");
+
+        // Beginning of db insert code
+        $db = Craft::$app->getDb();
+
+        // Save filename metadata
+        $test = $db->createCommand()
+            ->insert('{{%universaldamintegrator_asset_metadata}}',  [
+                'assetId' => $element->id,
+                'dam_meta_key' => 'filename',
+                'dam_meta_value' => $assetMetadata['name']
+            ])
+            ->execute();
+
+        // Save tags metadata
+        $test = $db->createCommand()
+            ->insert('{{%universaldamintegrator_asset_metadata}}',  [
+                'assetId' => $element->id,
+                'dam_meta_key' => 'tags',
+                'dam_meta_value' => JSON::encode($assetMetadata['tag'])
+            ])
+            ->execute();
+
+        // Save altText metadata
+        $test = $db->createCommand()
+            ->insert('{{%universaldamintegrator_asset_metadata}}',  [
+                'assetId' => $element->id,
+                'dam_meta_key' => 'altText',
+                'dam_meta_value' => JSON::encode($assetMetadata['additional']['Alt Text **EN**'] || null)
+            ])
+            ->execute();
+
+        // Save ES title metadata
+        $test = $db->createCommand()
+            ->insert('{{%universaldamintegrator_asset_metadata}}',  [
+                'assetId' => $element->id,
+                'dam_meta_key' => 'titleSpanish',
+                'dam_meta_value' => JSON::encode($assetMetadata['additional']['Title **ES**'] || null)
+            ])
+            ->execute();
+
+        // Save EN title metadata
+        $test = $db->createCommand()
+            ->insert('{{%universaldamintegrator_asset_metadata}}',  [
+                'assetId' => $element->id,
+                'dam_meta_key' => 'titleEnglish',
+                'dam_meta_value' => JSON::encode($assetMetadata['additional']['Title **EN**'] || null)
+            ])
+            ->execute();
+
+        // Save description metadata
+        $test = $db->createCommand()
+            ->insert('{{%universaldamintegrator_asset_metadata}}',  [
+                'assetId' => $element->id,
+                'dam_meta_key' => 'descripton',
+                'dam_meta_value' => JSON::encode($assetMetadata['description'])
+            ])
+            ->execute();
+
+        // End of db insert code
 
         return true;
     }

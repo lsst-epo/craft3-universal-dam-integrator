@@ -70,7 +70,8 @@ class Assets extends Component
                         Craft::info(print_r($this->assetMetadata), "rosas");
 
                         Craft::info("platypus -- the asset SHOULD save", "rosas");
-                    return $this->saveAssetMetadata();
+
+                        return $this->saveAssetMetadata();
                     }
                 } else {
 
@@ -86,8 +87,6 @@ class Assets extends Component
     }
 
     private function saveAssetMetadata() {
-        //MongoLog::getLogger()->log("This is a test", "eric rosas");
-        // Test saving a brand new asset
         $newAsset = new Asset();
         $newAsset->avoidFilenameConflicts = true;
         $newAsset->setScenario(Asset::SCENARIO_CREATE);
@@ -129,7 +128,15 @@ class Assets extends Component
 
         $elements = new Elements();
         //$success = $elements->saveElement($newAsset, false, true, false);
-        $success = $elements->saveElement($newAsset, false, true, true);
+        $success = $elements->saveElement($newAsset, false, true, true, $this->assetMetadata);
+
+
+        
+        Craft::info("bonobo - about to log success id:", "rosas");
+        Craft::info($success, "rosass");
+        // Craft::info(print_r($success), "rosas");
+        // Craft::info(print_r($newAsset), "rosas");
+
         return $success;
         //return null; // temp 
     }
