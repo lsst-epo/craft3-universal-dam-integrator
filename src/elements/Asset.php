@@ -9,9 +9,17 @@ use craft\base\ElementInterface;
 use craft\base\Element;
 use craft\elements\Asset as AssetElement;
 use rosas\dam\Plugin;
+use rosas\dam\elements\db\DAMAssetQuery;
+use craft\elements\db\ElementQueryInterface;
 
 class Asset extends Element {
 //class Asset extends AssetElement {
+
+    /**
+     * @var string|null dam_meta_key
+     */
+    public $dam_meta_key;
+
 
     /**
      * Validation scenario that should be used when the asset is only getting *moved*; not renamed.
@@ -165,7 +173,7 @@ class Asset extends Element {
      * @var int|null
      */
     private $_oldVolumeId;
-
+    
     public function __construct() {
         parent::__construct();
     }
@@ -333,10 +341,18 @@ class Asset extends Element {
             $record->dateModified = $now->format('Y-m-d H:i:s');
 
             $tester = $record->save(true);
-            Craft::info("maddie - logging tester: ", "rosas");
-            Craft::info($tester, "rosas");
         }
         parent::afterSave($isNew);
+    }
+
+    /**
+     * @return DAMAssetQuery The newly created [[AssetQuery]] instance.
+     */
+    public static function find(): ElementQueryInterface
+    {
+        Craft::info("tardigrade - in Asset::find()");
+        Craft::info(static::class);
+        return new DAMAssetQuery(static::class);
     }
 
 }

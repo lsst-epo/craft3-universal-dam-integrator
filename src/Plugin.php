@@ -12,6 +12,9 @@ use craft\services\Assets as CraftAssets;
 use yii\base\Behavior;
 use craft\events\GetAssetThumbUrlEvent;
 use craft\events\GetAssetUrlEvent;
+use rosas\dam\gql\queries\DAMAssetQuery;
+use craft\services\Gql;
+use craft\events\RegisterGqlQueriesEvent;
 
 class Plugin extends \craft\base\Plugin
 {
@@ -75,7 +78,16 @@ class Plugin extends \craft\base\Plugin
                 function(GetAssetUrlEvent $event) {
                     $event->url = Plugin::$plugin->assets->getUrl($event);
                 }
-            );
+        );
+
+        // Register query for retrieving DAM asset metadata
+        Event::on(
+            Gql::class,
+            Gql::EVENT_REGISTER_GQL_QUERIES,
+            function(RegisterGqlQueriesEvent $event) {                
+                $event->queries['enhancedAssetsQuery'] = DAMAssetQuery::getQueries();
+            }
+        );
     }
 
     protected function settingsHtml() {
