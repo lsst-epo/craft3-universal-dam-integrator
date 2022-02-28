@@ -22,23 +22,23 @@ class DAMAssetInterface extends ElementInterface {
      */
     public static function getType($fields = null): Type
     {
-        if ($type = GqlEntityRegistry::getEntity(self::getName())) {
+        if ($type = GqlEntityRegistry::getEntity(self::class)) {
             return $type;
-        } //else if ($type = GqlEntityRegistry::getEntity(self::get)
+        }
 
         $type = GqlEntityRegistry::createEntity(self::class, new InterfaceType([
             'name' => static::getName(),
             'fields' => self::class . '::getFieldDefinitions',
             'description' => 'This is the interface implemented by all assets.',
-            'resolveType' => self::class . '::resolveElementTypeName'
-            // 'resolveType' => function($value) {
-            //     Craft::info("tardy - inside of anon function");
-            //     Craft::info($value);
+            // 'resolveType' => self::class . '::resolveElementTypeName'
+            'resolveType' => function($value) {
+                Craft::info("tardy - inside of anon function");
+                Craft::info($value);
 
-            //     //return GqlEntityRegistry::getEntity("AssetInterface");
-            //     // return GqlEntityRegistry::getEntity('DAMAssetType');
-            //     return new Asset();
-            // }
+                //return GqlEntityRegistry::getEntity("AssetInterface");
+                return GqlEntityRegistry::getEntity(DAMAssetGenerator::getName());
+                // return new Asset();
+            }
         ]));
 
         //AssetType::generateTypes();
@@ -78,9 +78,9 @@ class DAMAssetInterface extends ElementInterface {
                 'type' => Type::string(),
                 'description' => 'Gets the key from the dam metadata table.'
             ],
-            'volumeId' => [
-                'name' => 'volumeId',
-                'type' => Type::int(),
+            'dam_meta_value' => [
+                'name' => 'dam_meta_value',
+                'type' => Type::string(),
                 'description' => 'The ID of the volume that the asset belongs to.',
             ],
         ]), self::getName());

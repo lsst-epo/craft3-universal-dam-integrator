@@ -18,7 +18,18 @@ class Asset extends Element {
     /**
      * @var string|null dam_meta_key
      */
-    public $dam_meta_key;
+    public $dam_meta_key = "rosas";
+    public function setDam_meta_key($dam_meta_key) {
+        $this->dam_meta_key = $dam_meta_key;
+    }
+
+    public function setDamMetaKey($dam_meta_key) {
+        $this->dam_meta_key = $dam_meta_key;
+    }
+
+    public $assetId;
+
+    public $dam_meta_value;
 
 
     /**
@@ -173,8 +184,27 @@ class Asset extends Element {
      * @var int|null
      */
     private $_oldVolumeId;
+
+    /**
+     * @inheritdoc
+     * @since 3.3.0
+     */
+    public static function gqlScopesByContext($context): array
+    {
+        return ['volumes.' . $context->uid];
+    }
     
-    public function __construct() {
+    public function __construct($test) {
+        Craft::info("tardy - inside of Asset::__construct()", "rosas");
+        Craft::info($test, "rosas");
+        if($test != null) {
+            $this->dam_meta_key = $test["dam_meta_key"];
+            $this->dam_meta_value = $test["dam_meta_value"];
+            $this->id = $test["id"];
+        }
+
+        // $this->setDam_meta_key = $test->dam_meta_key;
+
         parent::__construct();
     }
 

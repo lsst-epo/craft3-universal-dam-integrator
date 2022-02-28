@@ -10,6 +10,7 @@ use rosas\dam\services\Elements;
 use craft\helpers\Json;
 use craft\events\GetAssetThumbUrlEvent;
 use craft\events\GetAssetUrlEvent;
+use \rosas\dam\Plugin;
 // use rosas\dam\mongo\MongoLog;
 
 class Assets extends Component
@@ -156,31 +157,34 @@ class Assets extends Component
         $asset = $event->asset;
         
         
-        $settingsVolID = Craft::$app->getVolumes()->getVolumeByHandle($getAssetMetadataEndpoint = \rosas\dam\Plugin::getInstance()->getSettings()->damVolume)["id"];
-        if($asset->getVolumeId() == $settingsVolID) {
-            Craft::info("schnoodle - inside of the eval!!!!", "rosas");
-        //if(substr($asset->kind, 0, 3) == "ext") {
-            // $parsedKey = substr($asset->kind, 9);
-            // $parsedKey = str_replace(")", "", $parsedKey);
-
-            $this->authToken = $this->getAuthToken();
-            $client = Craft::createGuzzleClient();
-            $getAssetMetadataEndpoint = \rosas\dam\Plugin::getInstance()->getSettings()->retrieveAssetMetadataEndpoint;
-            try {
-                $bearerToken = "Bearer {$this->authToken}";
-                $response = $client->request("GET", $getAssetMetadataEndpoint, ['headers' => ["Authorization" => $bearerToken]]);
-                $body = $response->getBody();
-        
-                //Depending on the API...
-                $url = Json::decodeIfJson($body)["url"]["directUrlPreview"];
-            } catch (Exception $e) {
-                return $e;
+        if(Plugin::getInstance()->getSettings()->damVolume != null) {
+            $settingsVolID = Craft::$app->getVolumes()->getVolumeByHandle($getAssetMetadataEndpoint = Plugin::getInstance()->getSettings()->damVolume)["id"];
+            if($asset->getVolumeId() == $settingsVolID) {
+                Craft::info("schnoodle - inside of the eval!!!!", "rosas");
+            //if(substr($asset->kind, 0, 3) == "ext") {
+                // $parsedKey = substr($asset->kind, 9);
+                // $parsedKey = str_replace(")", "", $parsedKey);
+    
+                $this->authToken = $this->getAuthToken();
+                $client = Craft::createGuzzleClient();
+                $getAssetMetadataEndpoint = \rosas\dam\Plugin::getInstance()->getSettings()->retrieveAssetMetadataEndpoint;
+                try {
+                    $bearerToken = "Bearer {$this->authToken}";
+                    $response = $client->request("GET", $getAssetMetadataEndpoint, ['headers' => ["Authorization" => $bearerToken]]);
+                    $body = $response->getBody();
+            
+                    //Depending on the API...
+                    $url = Json::decodeIfJson($body)["url"]["directUrlPreview"];
+                } catch (Exception $e) {
+                    return $e;
+                }
+    
             }
-
+            Craft::endProfile('handleGetAssetThumbUrlEvent', __METHOD__);
+    
+            return $url;
         }
-        Craft::endProfile('handleGetAssetThumbUrlEvent', __METHOD__);
-
-        return $url;
+        return "";
 
     }
 

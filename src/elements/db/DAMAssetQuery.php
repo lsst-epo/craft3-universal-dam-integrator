@@ -187,8 +187,55 @@ class DAMAssetQuery extends ElementQuery {
     private static $_supportsUploaderParam;
 
     public function __construct(string $elementType, array $config = []) {
-        Craft::info("tardigrade - inside DAMAssetQuery::__construct : " . $elementType);
+        Craft::info("tardy - inside DAMAssetQuery::__construct()", "rosas");
+        Craft::info($elementType, "rosas");
+        Craft::info($config, "rosas");
         parent::__construct($elementType, $config);
+    }
+
+    //     /**
+    //  * @inheritdoc
+    //  * @uses $id
+    //  */
+    // public function id($value)
+    // {
+    //     $this->id = $value;
+    //     return $this;
+    // }
+
+    //     /**
+    //  * @inheritdoc
+    //  */
+    // public function __set($name, $value)
+    // {
+    //     // switch ($name) {
+    //     //     case 'site':
+    //     //         $this->site($value);
+    //     //         break;
+    //     //     case 'localeEnabled':
+    //     //         Craft::$app->getDeprecator()->log('ElementQuery::localeEnabled()', 'The `localeEnabled` element query param has been deprecated. `status()` should be used instead.');
+    //     //         $this->enabledForSite = $value;
+    //     //         break;
+    //     //     case 'locale':
+    //     //         Craft::$app->getDeprecator()->log('ElementQuery::locale()', 'The `locale` element query param has been deprecated. Use `site` or `siteId` instead.');
+    //     //         $this->site($value);
+    //     //         break;
+    //     //     case 'order':
+    //     //         Craft::$app->getDeprecator()->log('ElementQuery::order()', 'The `order` element query param has been deprecated. Use `orderBy` instead.');
+    //     //         $this->orderBy = $value;
+    //     //         break;
+    //     //     default:
+    //         Craft::info("tardy - inside of DAMAssetQuery::__set()", "rosas");
+    //         Craft::info($name, "rosas");
+    //         Craft::info($value, "rosas");
+    //         parent::__set($name, $value);
+    //     // }
+    // }
+
+    public function populate($rows) {
+        Craft::info("tardy - inside of DAMAssetQuery::populate()", "rosas");
+        Craft::info($rows, "rosas");
+        return parent::populate($rows);
     }
 
     /**
@@ -234,12 +281,10 @@ class DAMAssetQuery extends ElementQuery {
      */
     protected function beforePrepare(): bool
     {
-        Craft::info("tardigrade - in the DAMAssetQuery::beforePrepare()");
         $this->_normalizeVolumeId();
 
         // See if 'volume' was set to an invalid handle
         if ($this->volumeId === []) {
-            Craft::info("tardigrade - in the DAMAssetQuery::beforePrepare() - volumeId is empty!!!!");
             return false;
         }
 

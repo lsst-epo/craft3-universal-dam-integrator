@@ -2,7 +2,8 @@
 
 namespace rosas\dam\gql\types;
 
-use rosas\dam\gql\interfaces\Asset;
+use Craft;
+use rosas\dam\gql\interfaces\DAMAssetInterface;
 
 use craft\gql\base\ObjectType;
 
@@ -34,9 +35,9 @@ class DAMAssetType extends ObjectType
      */
     protected function resolve($source, $arguments, $context, ResolveInfo $resolveInfo)
     {
-        // $fieldName = SeomaticInterface::GRAPH_QL_FIELDS[$resolveInfo->fieldName];
 
-        return $source[$fieldName];
-        //return DAMASsetInterface::getFieldDefinitions();
+        return $source[$resolveInfo->fieldName];
+        // return $source["this_is_a_test"];
+
     }
 }
