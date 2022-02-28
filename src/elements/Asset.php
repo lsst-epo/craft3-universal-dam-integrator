@@ -18,19 +18,13 @@ class Asset extends Element {
     /**
      * @var string|null dam_meta_key
      */
-    public $dam_meta_key = "rosas";
-    public function setDam_meta_key($dam_meta_key) {
-        $this->dam_meta_key = $dam_meta_key;
-    }
-
-    public function setDamMetaKey($dam_meta_key) {
-        $this->dam_meta_key = $dam_meta_key;
-    }
+    public $dam_meta_key;
 
     public $assetId;
 
     public $dam_meta_value;
 
+    public $damMetadata;
 
     /**
      * Validation scenario that should be used when the asset is only getting *moved*; not renamed.
@@ -194,16 +188,15 @@ class Asset extends Element {
         return ['volumes.' . $context->uid];
     }
     
-    public function __construct($test) {
-        Craft::info("tardy - inside of Asset::__construct()", "rosas");
-        Craft::info($test, "rosas");
-        if($test != null) {
-            $this->dam_meta_key = $test["dam_meta_key"];
-            $this->dam_meta_value = $test["dam_meta_value"];
-            $this->id = $test["id"];
+    public function __construct($config) {
+        if($config != null) {
+            $this->dam_meta_key = $config["dam_meta_key"];
+            $this->dam_meta_value = $config["dam_meta_value"];
+            if(array_key_exists('damMetadata', $config)) {
+                $this->damMetadata = $config['damMetadata'];
+            }
+            $this->id = $config["id"];
         }
-
-        // $this->setDam_meta_key = $test->dam_meta_key;
 
         parent::__construct();
     }
@@ -219,7 +212,6 @@ class Asset extends Element {
      */
     public function setWidth($width)
     {
-        Craft::info("maddie - in setWidth()");
         $this->_width = $width;
     }
 
@@ -264,9 +256,7 @@ class Asset extends Element {
      */
     private function _dimensions($transform = null): array
     {
-        Craft::info("maddie - inside of _dimensions() functionz!", "rosas");
         if(substr($asset->kind, 0, 3) != "ext") {
-            Craft::info("maddie - oh no, null/null!", "rosas");
             return [null, null];
         }
 
@@ -274,40 +264,18 @@ class Asset extends Element {
             if ($this->getScenario() !== self::SCENARIO_CREATE) {
                 Craft::warning("maddie - Asset $this->id is missing its width or height", __METHOD__);
             }
-            Craft::info("maddie - oh no! either height or width is null", "rosas");
             return [null, null];
         }
 
         $transform = $transform ?? $this->_transform;
 
         if ($transform === null || !Image::canManipulateAsImage($this->getExtension())) {
-            Craft::info("maddie - returning _width: " . $this->_width . ", _height :" . $this->_height, "rosas");
             return [$this->_width, $this->_height];
         }
-        Craft::info("maddie - doing other work", "rosas");
         $transform = Craft::$app->getAssetTransforms()->normalizeTransform($transform);
-
-        // if ($this->_width < $transform->width && $this->_height < $transform->height && !Craft::$app->getConfig()->getGeneral()->upscaleImages) {
-        //     $transformRatio = $transform->width / $transform->height;
-        //     $imageRatio = $this->_width / $this->_height;
-
-        //     if ($transform->mode !== 'crop' || $imageRatio === $transformRatio) {
-        //         return [$this->_width, $this->_height];
-        //     }
-
-        //     return $transformRatio > 1 ? [$this->_width, round($this->_height / $transformRatio)] : [round($this->_width * $transformRatio), $this->_height];
-        // }
 
         [$width, $height] = Image::calculateMissingDimension($transform->width, $transform->height, $this->_width, $this->_height);
 
-        // Special case for 'fit' since that's the only one whose dimensions vary from the transform dimensions
-        // if ($transform->mode === 'fit') {
-        //     $factor = max($this->_width / $width, $this->_height / $height);
-        //     $width = (int)round($this->_width / $factor);
-        //     $height = (int)round($this->_height / $factor);
-        // }
-        
-        Craft::info("maddie - returning width: " . $width . ", height: " . $height, "rosas");
         return [$width, $height];
     }
 
@@ -347,20 +315,12 @@ class Asset extends Element {
                 $record = new AssetRecord();
                 $record->id = (int)$this->element->id;
              }
-             // Craft::$app->getVolumes()->getVolumeByHandle($handle)
 
             $damVol = \rosas\dam\Plugin::getInstance()->settings->damVolume;
 
-            //$now = new DateTime(null, new DateTimeZone('America/Phoenix'));
             $now = new DateTime();
-            // $now->format('Y-m-d H:i:s');    // MySQL datetime format
-            // echo $now->getTimestamp();           // Unix Timestamp -- Since PHP 5.3
 
             $record->filename = $this->element->filename;
-            //$record->volumeId = $this->element->getVolumeId();
-            Craft::info("maddie - abouut to log element!", "rosas");
-            Craft::info("maddie - height: " . $this->element->getHeight() . ", width: " . $this->element->getWidth(), "rosas");
-            // Craft::info(print_r($this->element), "rosas");
             $record->volumeId = Craft::$app->getVolumes()->getVolumeByHandle($damVol)["id"];
             $record->folderId = (int)$this->element->folderId;
             $record->uploaderId = (int)$this->element->uploaderId ?: null;
@@ -378,10 +338,7 @@ class Asset extends Element {
     /**
      * @return DAMAssetQuery The newly created [[AssetQuery]] instance.
      */
-    public static function find(): ElementQueryInterface
-    {
-        Craft::info("tardigrade - in Asset::find()");
-        Craft::info(static::class);
+    public static function find(): ElementQueryInterface {
         return new DAMAssetQuery(static::class);
     }
 

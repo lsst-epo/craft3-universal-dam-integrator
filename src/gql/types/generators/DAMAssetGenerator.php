@@ -59,28 +59,6 @@ class DAMAssetGenerator implements GeneratorInterface
     {
         return 'DAMAssetType';
     }
-    //     /**
-    //  * @inheritdoc
-    //  */
-    // public static function generateTypes($context = null): array
-    // {
-    //     $volumes = Craft::$app->getVolumes()->getAllVolumes();
-    //     $gqlTypes = [];
-
-    //     foreach ($volumes as $volume) {
-    //         $requiredContexts = AssetElement::gqlScopesByContext($volume);
-
-    //         if (!GqlHelper::isSchemaAwareOf($requiredContexts)) {
-    //             continue;
-    //         }
-
-    //         // Generate a type for each volume
-    //         $type = static::generateType($volume);
-    //         $gqlTypes[$type->name] = $type;
-    //     }
-
-    //     return $gqlTypes;
-    // }
 
     /**
      * @inheritdoc

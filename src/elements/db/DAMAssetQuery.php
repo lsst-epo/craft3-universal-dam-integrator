@@ -10,6 +10,8 @@ use craft\db\Query;
 use craft\helpers\Db;
 use craft\helpers\ArrayHelper;
 
+use rosas\dam\models\Metadata;
+
 class DAMAssetQuery extends ElementQuery {
 
      /**
@@ -187,55 +189,42 @@ class DAMAssetQuery extends ElementQuery {
     private static $_supportsUploaderParam;
 
     public function __construct(string $elementType, array $config = []) {
-        Craft::info("tardy - inside DAMAssetQuery::__construct()", "rosas");
-        Craft::info($elementType, "rosas");
-        Craft::info($config, "rosas");
         parent::__construct($elementType, $config);
     }
-
-    //     /**
-    //  * @inheritdoc
-    //  * @uses $id
-    //  */
-    // public function id($value)
-    // {
-    //     $this->id = $value;
-    //     return $this;
-    // }
-
-    //     /**
-    //  * @inheritdoc
-    //  */
-    // public function __set($name, $value)
-    // {
-    //     // switch ($name) {
-    //     //     case 'site':
-    //     //         $this->site($value);
-    //     //         break;
-    //     //     case 'localeEnabled':
-    //     //         Craft::$app->getDeprecator()->log('ElementQuery::localeEnabled()', 'The `localeEnabled` element query param has been deprecated. `status()` should be used instead.');
-    //     //         $this->enabledForSite = $value;
-    //     //         break;
-    //     //     case 'locale':
-    //     //         Craft::$app->getDeprecator()->log('ElementQuery::locale()', 'The `locale` element query param has been deprecated. Use `site` or `siteId` instead.');
-    //     //         $this->site($value);
-    //     //         break;
-    //     //     case 'order':
-    //     //         Craft::$app->getDeprecator()->log('ElementQuery::order()', 'The `order` element query param has been deprecated. Use `orderBy` instead.');
-    //     //         $this->orderBy = $value;
-    //     //         break;
-    //     //     default:
-    //         Craft::info("tardy - inside of DAMAssetQuery::__set()", "rosas");
-    //         Craft::info($name, "rosas");
-    //         Craft::info($value, "rosas");
-    //         parent::__set($name, $value);
-    //     // }
-    // }
-
+  
     public function populate($rows) {
-        Craft::info("tardy - inside of DAMAssetQuery::populate()", "rosas");
-        Craft::info($rows, "rosas");
-        return parent::populate($rows);
+        return parent::populate($this->normalizeMetadata($rows));
+    }
+
+    public function normalizeMetadata($rows) {
+        $normalizedRows = [];
+
+        $prevId = null;
+        $currArr = null;
+        foreach ($rows as $row) {
+            if($row['id'] != $prevId) {
+                if($currArr != null) {
+                    array_push($normalizedRows, $currArr);
+                }
+                $prevId = $row['id'];
+                $currArr = $row;
+                if(isset($row["dam_meta_key"]) && isset($row["dam_meta_value"])) {
+                    $meta = new Metadata([]);
+                    $meta->metadataKey = $row["dam_meta_key"];
+                    $meta->metadataValue = $row["dam_meta_value"];
+                    $currArr['damMetadata'] = [$meta];
+                }
+            } else {
+                if(isset($row["dam_meta_key"]) && isset($row["dam_meta_value"])) {
+                    $meta = new Metadata([]);
+                    $meta->metadataKey = $row["dam_meta_key"];
+                    $meta->metadataValue = $row["dam_meta_value"];
+                    array_push($currArr["damMetadata"], $meta);
+                }
+            }
+        }
+
+        return $normalizedRows;
     }
 
     /**
@@ -294,7 +283,8 @@ class DAMAssetQuery extends ElementQuery {
 
         // Join to custom universaldamintegrator_asset_metadata table
         // $this->subQuery->innerJoin(['asset_metadata' => 'universaldamintegrator_asset_metadata'], '[[asset_metadata.assetId]] = [[assets.==id]]');
-        $this->query->innerJoin(['asset_metadata' => 'universaldamintegrator_asset_metadata'], '[[asset_metadata.assetId]] = [[assets.id]]');
+        // previously innerJoin
+        $this->query->leftJoin(['asset_metadata' => 'universaldamintegrator_asset_metadata'], '[[asset_metadata.assetId]] = [[assets.id]]');
         
 
         $this->query->select([

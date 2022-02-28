@@ -4,7 +4,6 @@ namespace rosas\dam\gql\interfaces;
 
 use Craft;
 use GraphQL\Type\Definition\Type;
-// use craft\gql\base\InterfaceType as BaseInterfaceType;
 use craft\gql\interfaces\Element as ElementInterface;
 use craft\gql\TypeManager;
 use craft\gql\GqlEntityRegistry;
@@ -14,6 +13,7 @@ use craft\helpers\Json;
 
 use rosas\dam\gql\types\generators\DAMAssetGenerator;
 use rosas\dam\elements\Asset;
+use rosas\dam\models\Metadata;
 
 class DAMAssetInterface extends ElementInterface {
 
@@ -30,24 +30,15 @@ class DAMAssetInterface extends ElementInterface {
             'name' => static::getName(),
             'fields' => self::class . '::getFieldDefinitions',
             'description' => 'This is the interface implemented by all assets.',
-            // 'resolveType' => self::class . '::resolveElementTypeName'
             'resolveType' => function($value) {
-                Craft::info("tardy - inside of anon function");
-                Craft::info($value);
-
-                //return GqlEntityRegistry::getEntity("AssetInterface");
                 return GqlEntityRegistry::getEntity(DAMAssetGenerator::getName());
-                // return new Asset();
             }
         ]));
 
-        //AssetType::generateTypes();
         DAMAssetGenerator::generateTypes();
 
         return $type;
     }
-
-    
 
     /**
      * @inheritdoc
@@ -55,7 +46,6 @@ class DAMAssetInterface extends ElementInterface {
     public static function getTypeGenerator(): string
     {
         return DAMAssetGenerator::class;
-        //return AssetType::class;
     }
 
     /**
@@ -64,7 +54,6 @@ class DAMAssetInterface extends ElementInterface {
     public static function getName(): string
     {
         return 'DAMAssetInterface';
-        //return 'Element';
     }
 
     /**
@@ -81,8 +70,13 @@ class DAMAssetInterface extends ElementInterface {
             'dam_meta_value' => [
                 'name' => 'dam_meta_value',
                 'type' => Type::string(),
-                'description' => 'The ID of the volume that the asset belongs to.',
+                'description' => 'Gets the value from the dam metadata table.',
             ],
+            'damMetadata' => [
+                'name' => 'damMetadata',
+                'type' => Type::listOf(GqlEntityRegistry::getEntity(Metadata::getType())),
+                'description' => 'Gets the key-value from the dam metadata table.',
+            ]
         ]), self::getName());
     }
 }

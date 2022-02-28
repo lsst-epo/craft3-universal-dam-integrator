@@ -16,13 +16,11 @@ use GraphQL\Type\Definition\ResolveInfo;
  * @package   Seomatic
  * @since     3.2.8
  */
-class DAMAssetType extends ObjectType
-{
+class DAMAssetType extends ObjectType {
     /**
      * @inheritdoc
      */
-    public function __construct(array $config)
-    {
+    public function __construct(array $config) {
         $config['interfaces'] = [
             DAMAssetInterface::getType(),
         ];
@@ -33,11 +31,7 @@ class DAMAssetType extends ObjectType
     /**
      * @inheritdoc
      */
-    protected function resolve($source, $arguments, $context, ResolveInfo $resolveInfo)
-    {
-
+    protected function resolve($source, $arguments, $context, ResolveInfo $resolveInfo) {
         return $source[$resolveInfo->fieldName];
-        // return $source["this_is_a_test"];
-
     }
 }

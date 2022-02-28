@@ -33,25 +33,7 @@ class DAMAssetResolver extends ElementResolver {
             $query->$key($value);
         }
 
-        // $pairs = GqlHelper::extractAllowedEntitiesFromSchema('read');
-
-        // if (!GqlHelper::canQueryAssets()) {
-        //     return [];
-        // }
-
-        //$query->andWhere(['in', 'assets.volumeId', array_values(Db::idsByUids(Table::VOLUMES, $pairs['volumes']))]);
-
         return $query;
     }
-
-    /**
-    //  * @inheritdoc
-    //  */
-    // public static function resolve($source, array $arguments, $context, ResolveInfo $resolveInfo)
-    // {
-    //     $query = self::prepareElementQuery($source, $arguments, $context, $resolveInfo);
-    //     $value = $query instanceof DAMAssetQuery ? $query->all() : $query;
-    //     return GqlHelper::applyDirectives($source, $resolveInfo, $value);
-    // }
 
 }
