@@ -5,7 +5,6 @@ use \Datetime;
 use Craft;
 use yii\base\Component;
 use craft\elements\Asset;
-//use rosas\dam\elements\Asset;
 use rosas\dam\services\Elements;
 use craft\helpers\Json;
 use craft\events\GetAssetThumbUrlEvent;
@@ -13,7 +12,6 @@ use craft\events\GetAssetUrlEvent;
 use rosas\dam\elements\db\DAMAssetQuery;
 use \rosas\dam\Plugin;
 use rosas\dam\db\AssetMetadata;
-// use rosas\dam\mongo\MongoLog;
 
 class Assets extends Component
 {
@@ -46,9 +44,8 @@ class Assets extends Component
         return $vols;
     }
 
-    public function testMetaSave() {
+    public function saveDamAsset($damId = "hu4hj1m04p3f940us68a1g6j3f") {
         // Ensure settings are saved before attempting any requests
-        Craft::info("platypus - about to start testMetaSave() process", "rosas");
         if(isset(\rosas\dam\Plugin::getInstance()->getSettings()->retrieveAssetMetadataEndpoint) &&
            isset(\rosas\dam\Plugin::getInstance()->getSettings()->authEndpoint) &&
            isset(\rosas\dam\Plugin::getInstance()->getSettings()->secretKey) &&
@@ -56,14 +53,12 @@ class Assets extends Component
             try {
                 $this->authToken = $this->getAuthToken();
                 if($this->authToken != null && !empty($this->authToken)) {
-                    $this->assetMetadata = $this->getAssetMetadata("hu4hj1m04p3f940us68a1g6j3f");
+                    $this->assetMetadata = $this->getAssetMetadata($damId);
                     if(in_array('errorMessage', $this->assetMetadata)) {
                         return null;
                     } else {
                         return $this->saveAssetMetadata();
                     }
-                } else {
-
                 }
             } catch (\Exception $e) {
                 return $e;

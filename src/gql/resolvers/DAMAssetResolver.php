@@ -36,15 +36,4 @@ class DAMAssetResolver extends ElementResolver {
         return $query;
     }
 
-        /**
-     * @inheritdoc
-     */
-    public static function resolve($source, array $arguments, $context, ResolveInfo $resolveInfo)
-    {
-        // $query = self::prepareElementQuery($source, $arguments, $context, $resolveInfo);
-        // $value = $query instanceof ElementQuery ? $query->all() : $query;
-        // return GqlHelper::applyDirectives($source, $resolveInfo, $value);
-        return parent::resolve($source, $arguments, $context, $resolveInfo);
-    }
-
 }

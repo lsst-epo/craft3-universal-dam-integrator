@@ -6,6 +6,7 @@ use Craft;
 use craft\web\Controller;
 use yii\web\Response;
 use craft\helpers\Json;
+use rosas\dam\services\Asset;
 
 class AssetSyncController extends Controller {
 
@@ -35,14 +36,12 @@ class AssetSyncController extends Controller {
      */
     public $allowAnonymous = self::ALLOW_ANONYMOUS_LIVE;
 
-    //public function actionTest(): Response {
     public function actionAssetCreateWebhook() {
-
-
+        $damId = $this->request->getBodyParam('id');
+        Asset::saveDamAsset($damId);
         
-        return $this->asJson([
-            'assetId' => $this->request->getBodyParam('id')
-        ]);
-
+        // return $this->asJson([
+        //     'assetId' => $this->request->getBodyParam('id')
+        // ]);
     }
 }
