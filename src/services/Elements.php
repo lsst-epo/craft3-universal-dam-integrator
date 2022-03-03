@@ -491,8 +491,6 @@ class Elements extends ElementsService {
         $element->firstSave = $originalFirstSave;
         $element->propagateAll = $originalPropagateAll;
 
-        // Craft::info($element->id, "rosass");
-
         // Beginning of db insert code
         $db = Craft::$app->getDb();
 
@@ -547,6 +545,15 @@ class Elements extends ElementsService {
                 'assetId' => $element->id,
                 'dam_meta_key' => 'descripton',
                 'dam_meta_value' => JSON::encode($assetMetadata['description'])
+            ])
+            ->execute();
+
+        // Save thumbnail URL
+        $test = $db->createCommand()
+            ->insert('{{%universaldamintegrator_asset_metadata}}',  [
+                'assetId' => $element->id,
+                'dam_meta_key' => 'thumbnailUrl',
+                'dam_meta_value' => JSON::encode($assetMetadata['url']['directUrlPreview'])
             ])
             ->execute();
 

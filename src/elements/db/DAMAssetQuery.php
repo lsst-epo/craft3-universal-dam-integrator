@@ -182,17 +182,23 @@ class DAMAssetQuery extends ElementQuery {
      */
     public $assetMetadata = [];
 
+    public $assetId;
+
     /**
      * @var bool
      * @see _supportsUploaderParam()
      */
     private static $_supportsUploaderParam;
 
-    public function __construct(string $elementType, array $config = []) {
+    public function __construct(string $elementType, array $config = [], $assetId = null) {
+        Craft::info("tardy - inside of DAMAssetQuery::__construct()", "rosas");
+        $this->assetId = $assetId;
         parent::__construct($elementType, $config);
     }
   
     public function populate($rows) {
+        Craft::info("tardy - inside of DAMAssetQuery::populate()", "rosas");
+        Craft::info($rows, "rosas");
         return parent::populate($this->normalizeMetadata($rows));
     }
 
@@ -303,6 +309,12 @@ class DAMAssetQuery extends ElementQuery {
             'assets.dateModified',
             'volumeFolders.path AS folderPath',
         ]);
+
+        // Refine by ID
+        if($this->assetId != null) {
+            $this->query->andWhere(['assets.id' => $damId]);
+        }
+        
 
         if (self::_supportsUploaderParam()) {
             $this->query->addSelect('assets.uploaderId');

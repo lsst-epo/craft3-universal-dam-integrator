@@ -26,6 +26,8 @@ class Asset extends Element {
 
     public $damMetadata;
 
+    public $thumbnailUrl;
+
     /**
      * Validation scenario that should be used when the asset is only getting *moved*; not renamed.
      *
@@ -188,13 +190,13 @@ class Asset extends Element {
         return ['volumes.' . $context->uid];
     }
     
-    public function __construct($config) {
+    public function __construct($config = []) {
         if($config != null) {
             $this->dam_meta_key = $config["dam_meta_key"];
             $this->dam_meta_value = $config["dam_meta_value"];
             if(array_key_exists('damMetadata', $config)) {
                 $this->damMetadata = $config['damMetadata'];
-            }
+            }  
             $this->id = $config["id"];
         }
 
@@ -292,7 +294,6 @@ class Asset extends Element {
 
     public function afterSave(bool $isNew)
     {
-        Craft::getLogger()->log(" - in the overridden class!",  $category = 'rosas');
         if (!$this->propagating) {
             $isCpRequest = Craft::$app->getRequest()->getIsCpRequest();
             $sanitizeCpImageUploads = Craft::$app->getConfig()->getGeneral()->sanitizeCpImageUploads;
