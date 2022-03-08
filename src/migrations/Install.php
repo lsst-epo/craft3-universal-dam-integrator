@@ -111,7 +111,7 @@ class Install extends Migration
                 // Custom columns in the table
                     'assetId' => $this->integer()->notNull(),
                     'dam_meta_key' => $this->string(255)->notNull(),
-                    'dam_meta_value' => $this->string(255)->notNull()
+                    'dam_meta_value' => $this->string(1000)->notNull()
                 ]
             );
         }
@@ -163,15 +163,6 @@ class Install extends Migration
             'CASCADE',
             'CASCADE'
         );
-    }
-
-    /**
-     * Populates the DB with the default data.
-     *
-     * @return void
-     */
-    protected function insertDefaultData()
-    {
     }
 
     /**

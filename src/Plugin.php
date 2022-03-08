@@ -91,12 +91,30 @@ class Plugin extends \craft\base\Plugin
             }
         );
 
-        // Register the webhook endpoints controller
+        // Register the webhook endpoints CREATE controller
         Event::on(
             UrlManager::class,
             UrlManager::EVENT_REGISTER_SITE_URL_RULES,
             function (RegisterUrlRulesEvent $event) {
                 $event->rules['universal-dam-integrator/create'] = 'universal-dam-integrator/asset-sync/asset-create-webhook';
+            }
+        );
+
+        // Register the webhook endpoints DELETE controller
+        Event::on(
+            UrlManager::class,
+            UrlManager::EVENT_REGISTER_SITE_URL_RULES,
+            function (RegisterUrlRulesEvent $event) {
+                $event->rules['universal-dam-integrator/delete'] = 'universal-dam-integrator/asset-sync/asset-delete-webhook';
+            }
+        );
+
+        // Register the webhook endpoints UPDATE controller
+        Event::on(
+            UrlManager::class,
+            UrlManager::EVENT_REGISTER_SITE_URL_RULES,
+            function (RegisterUrlRulesEvent $event) {
+                $event->rules['universal-dam-integrator/update'] = 'universal-dam-integrator/asset-sync/asset-update-webhook';
             }
         );
     }

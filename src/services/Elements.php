@@ -6,6 +6,7 @@ use Craft;
 use craft\services\Elements as ElementsService;
 use craft\base\Element;
 use rosas\dam\elements\Asset;
+use rosas\dam\db\AssetMetadata;
 use craft\base\ElementInterface;
 use craft\helpers\ElementHelper;
 use craft\helpers\StringHelper;
@@ -491,73 +492,8 @@ class Elements extends ElementsService {
         $element->firstSave = $originalFirstSave;
         $element->propagateAll = $originalPropagateAll;
 
-        // Beginning of db insert code
-        $db = Craft::$app->getDb();
-
-        // Save filename metadata
-        $test = $db->createCommand()
-            ->insert('{{%universaldamintegrator_asset_metadata}}',  [
-                'assetId' => $element->id,
-                'dam_meta_key' => 'filename',
-                'dam_meta_value' => $assetMetadata['name']
-            ])
-            ->execute();
-
-        // Save tags metadata
-        $test = $db->createCommand()
-            ->insert('{{%universaldamintegrator_asset_metadata}}',  [
-                'assetId' => $element->id,
-                'dam_meta_key' => 'tags',
-                'dam_meta_value' => JSON::encode($assetMetadata['tag'])
-            ])
-            ->execute();
-
-        // Save altText metadata
-        $test = $db->createCommand()
-            ->insert('{{%universaldamintegrator_asset_metadata}}',  [
-                'assetId' => $element->id,
-                'dam_meta_key' => 'altText',
-                'dam_meta_value' => JSON::encode($assetMetadata['additional']['Alt Text **EN**'] || null)
-            ])
-            ->execute();
-
-        // Save ES title metadata
-        $test = $db->createCommand()
-            ->insert('{{%universaldamintegrator_asset_metadata}}',  [
-                'assetId' => $element->id,
-                'dam_meta_key' => 'titleSpanish',
-                'dam_meta_value' => JSON::encode($assetMetadata['additional']['Title **ES**'] || null)
-            ])
-            ->execute();
-
-        // Save EN title metadata
-        $test = $db->createCommand()
-            ->insert('{{%universaldamintegrator_asset_metadata}}',  [
-                'assetId' => $element->id,
-                'dam_meta_key' => 'titleEnglish',
-                'dam_meta_value' => JSON::encode($assetMetadata['additional']['Title **EN**'] || null)
-            ])
-            ->execute();
-
-        // Save description metadata
-        $test = $db->createCommand()
-            ->insert('{{%universaldamintegrator_asset_metadata}}',  [
-                'assetId' => $element->id,
-                'dam_meta_key' => 'descripton',
-                'dam_meta_value' => JSON::encode($assetMetadata['description'])
-            ])
-            ->execute();
-
-        // Save thumbnail URL
-        $test = $db->createCommand()
-            ->insert('{{%universaldamintegrator_asset_metadata}}',  [
-                'assetId' => $element->id,
-                'dam_meta_key' => 'thumbnailUrl',
-                'dam_meta_value' => JSON::encode($assetMetadata['url']['directUrlPreview'])
-            ])
-            ->execute();
-
-        // End of db insert code
+        // Add metadata to the DAM plugin metadata table
+        AssetMetadata::upsert($element->id, $assetMetadata);
 
         return true;
     }

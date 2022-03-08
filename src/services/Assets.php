@@ -20,13 +20,14 @@ class Assets extends Component
 
     private $assetMetadata;
 
-    public function __construct() {
+    public function __construct($config = []) {
         $this->authToken = '';
         $this->assetMetadata = '';
+        parent::__construct($config);
     }
 
     public function init() {
-        \rosas\dam\Plugin::getInstance()->setAttribute("message", "quick test");
+        // \rosas\dam\Plugin::getInstance()->setAttribute("message", "quick test");
         parent::init();
     }
 
@@ -118,7 +119,7 @@ class Assets extends Component
     /**
      * Get asset metadata
      */ 
-    private function getAssetMetadata($assetId) {
+    public function getAssetMetadata($assetId) {
         try {
             $client = Craft::createGuzzleClient();
             if(substr($assetId, 0, 1) == '/') {
