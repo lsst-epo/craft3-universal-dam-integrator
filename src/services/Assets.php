@@ -21,13 +21,10 @@ class Assets extends Component
     private $assetMetadata;
 
     public function __construct($config = []) {
-        $this->authToken = '';
-        $this->assetMetadata = '';
         parent::__construct($config);
     }
 
     public function init() {
-        // \rosas\dam\Plugin::getInstance()->setAttribute("message", "quick test");
         parent::init();
     }
 
@@ -122,9 +119,6 @@ class Assets extends Component
     public function getAssetMetadata($assetId) {
         try {
             $client = Craft::createGuzzleClient();
-            if(substr($assetId, 0, 1) == '/') {
-                $assetId = substr($assetId, 1);
-            }
             $baseUrl = \rosas\dam\Plugin::getInstance()->getSettings()->retrieveAssetMetadataEndpoint;
             if(substr($baseUrl, (strlen($baseUrl) - 1), strlen($baseUrl)) != '/') {
                 $baseUrl = $baseUrl . '/';
@@ -133,18 +127,18 @@ class Assets extends Component
 
             if(!isset($this->authToken)) {
                 $this->authToken = $this->getAuthToken();
-            } else {
-
-                $bearerToken = "Bearer {$this->authToken}";
-                $response = $client->request("GET", $getAssetMetadataEndpoint, ['headers' => ["Authorization" => $bearerToken]]);
-                $body = $response->getBody();
-    
-                if(!is_array(JSON::decodeIfJson($body))) {
-                    return Json::decodeIfJson("{ 'errorMessage' : 'Asset metadata retrieval failed!'}");
-                } else {
-                    return Json::decodeIfJson($body);
-                }
             }
+
+            $bearerToken = "Bearer {$this->authToken}";
+            $response = $client->request("GET", $getAssetMetadataEndpoint, ['headers' => ["Authorization" => $bearerToken]]);
+            $body = $response->getBody();
+
+            if(!is_array(JSON::decodeIfJson($body))) {
+                return Json::decodeIfJson("{ 'errorMessage' : 'Asset metadata retrieval failed!'}");
+            } else {
+                return Json::decodeIfJson($body);
+            }
+            
         } catch (Exception $e) {
             return $e;
         }

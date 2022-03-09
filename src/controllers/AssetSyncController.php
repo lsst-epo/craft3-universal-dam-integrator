@@ -61,26 +61,15 @@ class AssetSyncController extends Controller {
     public function actionAssetUpdateWebhook() {
         $damId = $this->request->getBodyParam('id');
         $assetsService = new Assets();
-        $assetMetadata = $assetService->getAssetMetadata($damId);
-        // do something
+        $assetMetadata = $assetsService->getAssetMetadata($damId);
         $ids = $this->_getAssetIdByDamId($damId);
 
-        foreach($ids as $id) {
-            // Upsert logic
-            $table = "universaldamintegrator_asset_metadata";
-            // $time = $this->beginCommand("upsert into $table");
-            // $this->db->createCommand()->upsert($table, $insertColumns, $updateColumns, $params, $includeAuditColumns)->execute();
-            // $this->endCommand($time);
-
-            // $assetMetadataModel = new AssetMetadata();
-            // $assetMetadataModel->__set("assetId", $id);
-            // $assetMetadataModel->__set("dam_meta_key", "updated_from_webhook");
-            // $assetMetadataModel->__set("dam_meta_value", true);
-            //$assetMetadataModel->save();
-
-            
-            // Beginning of db insert code
-            AssetMetadata::upsert($id, $assetMetadata);
+        if($assetMetadata != null) {
+            foreach($ids as $id) { // Temporary code! There shouldn't be multiple craft asset records for a single DAM ID, but during dev testing there is
+                AssetMetadata::upsert($id, $assetMetadata);
+            }
+        } else {
+            return "update failed! no metadata found";
         }
 
         return "success!";
@@ -95,8 +84,6 @@ class AssetSyncController extends Controller {
         foreach($rows as $row) {
             array_push($ids, str_replace('"', '', $row['assetId']));
         }
-        Craft::info("schnauz - about to log ids:", "rosas");
-        Craft::info($ids, "rosas");
         return $ids;
     }
 }
