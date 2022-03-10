@@ -6,6 +6,8 @@ use Craft;
 use craft\web\Controller;
 use yii\web\Response;
 use craft\helpers\Json;
+use craft\records\Asset as AssetRecord;
+use craft\records\Element as ElementRecord;
 use rosas\dam\services\Assets;
 use rosas\dam\db\AssetMetadata;
 use rosas\dam\models\Constants;
@@ -52,7 +54,13 @@ class AssetSyncController extends Controller {
      */
     public function actionAssetDeleteWebhook() {
         $damId = $this->request->getBodyParam('id');
-        $assetMetadata = Assets::getAssetMetadata($damId);
+        $ids = $this->_getAssetIdByDamId($damId);
+
+        foreach($ids as $id) {
+            // Deleting the element record cascades to the assets record which cascades to the assetMetadata record
+            $element = ElementRecord::findOne($id);
+            $element->delete();
+        }
     }
 
     /**
