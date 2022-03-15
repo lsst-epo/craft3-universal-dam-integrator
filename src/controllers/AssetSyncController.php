@@ -44,9 +44,16 @@ class AssetSyncController extends Controller {
      * CREATE webhook controller
      */
     public function actionAssetCreateWebhook() {
+
         $damId = $this->request->getBodyParam('id');
         $assetsService = new Assets();
-        $assetsService->saveDamAsset($damId);
+        $res = $assetsService->saveDamAsset($damId);
+        if($res == false) {
+            return false;
+        } else {
+            return true;
+        }
+
     }
 
     /**

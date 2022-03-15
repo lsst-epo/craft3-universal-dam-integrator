@@ -4,7 +4,7 @@ namespace rosas\dam\db;
 
 use Craft;
 use craft\db\ActiveRecord;
-// use rosas\dam\models\Constants;
+use craft\helpers\Json;
 
 class AssetMetadata extends ActiveRecord{
     
@@ -18,8 +18,6 @@ class AssetMetadata extends ActiveRecord{
     }
 
     public static function upsert($id, $assetMetadata) {
-
-        // Beginning of db insert code
         $db = Craft::$app->getDb();
         foreach(\rosas\dam\models\Constants::ASSET_METADATA_FIELDS as $key => $value) {
             $metaVal = "";
@@ -28,7 +26,11 @@ class AssetMetadata extends ActiveRecord{
                 if(count($value) > 1) {
                     $metaVal = $metaVal[$value[1]];
                 }
-                $metaVal = ($metaVal == null) ? "" : $metaVal;
+                if ($key == "tags") {
+                    $metaVal = Json::encode($metaVal);
+                } else {
+                    $metaVal = ($metaVal == null) ? "" : $metaVal;
+                }
             }
 
             $rows = self::find() // check if the record alread exists

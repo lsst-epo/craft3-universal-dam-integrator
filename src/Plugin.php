@@ -117,6 +117,15 @@ class Plugin extends \craft\base\Plugin
                 $event->rules['universal-dam-integrator/update'] = 'universal-dam-integrator/asset-sync/asset-update-webhook';
             }
         );
+
+        // Register the webhook endpoints MASS SYNC controller
+        Event::on(
+            UrlManager::class,
+            UrlManager::EVENT_REGISTER_SITE_URL_RULES,
+            function (RegisterUrlRulesEvent $event) {
+                $event->rules['universal-dam-integrator/mass-sync'] = 'universal-dam-integrator/asset-sync/asset-mass-sync-webhook';
+            }
+        );
     }
 
     protected function settingsHtml() {
