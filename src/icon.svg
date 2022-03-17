@@ -6,11 +6,11 @@
    id="Layer_1"
    x="0px"
    y="0px"
-   viewBox="0 0 425.99999 489.99999"
+   viewBox="0 0 440.99999 504.99999"
    xml:space="preserve"
    sodipodi:docname="icon.svg"
-   width="426"
-   height="490"
+   width="441"
+   height="505"
    inkscape:version="1.1.2 (b8e25be8, 2022-02-05)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -30,8 +30,8 @@
    fit-margin-right="0"
    fit-margin-bottom="0"
    inkscape:zoom="1.378438"
-   inkscape:cx="269.50795"
-   inkscape:cy="220.17675"
+   inkscape:cx="299.97721"
+   inkscape:cy="254.99877"
    inkscape:window-width="1906"
    inkscape:window-height="1157"
    inkscape:window-x="1730"
@@ -40,166 +40,166 @@
    inkscape:current-layer="Layer_1" />
 <polygon
    style="fill:#ffffff"
-   points="449.6,0 33.6,0 33.6,352 163.2,480 449.6,480 "
+   points="33.6,352 163.2,480 449.6,480 449.6,0 33.6,0 "
    id="polygon114"
-   transform="translate(-28.6,5)" />
+   transform="translate(-21.1,12.5)" />
 <polyline
    style="fill:#e9f4f3"
    points="449.6,480 449.6,0 33.6,0 "
    id="polyline116"
-   transform="translate(-28.6,5)" />
+   transform="translate(-21.1,12.5)" />
 <polyline
    style="fill:#d4e8e5"
    points="449.6,224 449.6,0 33.6,0 "
    id="polyline118"
-   transform="translate(-28.6,5)" />
+   transform="translate(-21.1,12.5)" />
 <polygon
    style="fill:#d6e5e3"
-   points="289.6,480.8 161.6,352 161.6,480 289.6,480 "
+   points="161.6,480 289.6,480 289.6,480.8 161.6,352 "
    id="polygon120"
-   transform="translate(-28.6,5)" />
+   transform="translate(-21.1,12.5)" />
 <polygon
    style="fill:#8ac4bd"
-   points="161.6,483.2 161.6,352 33.6,352 "
+   points="33.6,352 161.6,483.2 161.6,352 "
    id="polygon122"
-   transform="translate(-28.6,5)" />
+   transform="translate(-21.1,12.5)" />
 <polygon
    style="fill:#67a59c"
-   points="82.4,402.4 161.6,483.2 161.6,352 95.2,413.6 "
+   points="161.6,352 95.2,413.6 82.4,402.4 161.6,483.2 "
    id="polygon124"
-   transform="translate(-28.6,5)" />
+   transform="translate(-21.1,12.5)" />
 <polygon
    style="fill:#1589ad"
-   points="384.8,336.8 303.2,343.2 222.4,336.8 303.2,176.8 "
+   points="222.4,336.8 303.2,176.8 384.8,336.8 303.2,343.2 "
    id="polygon126"
-   transform="translate(-28.6,5)" />
+   transform="translate(-21.1,12.5)" />
 <polyline
    style="fill:#035670"
    points="303.2,176.8 384.8,336.8 303.2,343.2 "
    id="polyline128"
-   transform="translate(-28.6,5)" />
+   transform="translate(-21.1,12.5)" />
 <polygon
    style="fill:#1ea4c4"
-   points="283.2,216.8 256.8,268 303.2,314.4 349.6,268 324,216.8 303.2,196 "
+   points="303.2,314.4 349.6,268 324,216.8 303.2,196 283.2,216.8 256.8,268 "
    id="polygon130"
-   transform="translate(-28.6,5)" />
+   transform="translate(-21.1,12.5)" />
 <polyline
    style="fill:#066b93"
    points="303.2,314.4 349.6,268 324,216.8 303.2,196 "
    id="polyline132"
-   transform="translate(-28.6,5)" />
+   transform="translate(-21.1,12.5)" />
 <polygon
    style="fill:#1589ad"
-   points="338.4,332.8 218.4,343.2 98.4,332.8 218.4,97.6 "
+   points="98.4,332.8 218.4,97.6 338.4,332.8 218.4,343.2 "
    id="polygon134"
-   transform="translate(-28.6,5)" />
+   transform="translate(-21.1,12.5)" />
 <polyline
    style="fill:#057091"
    points="218.4,97.6 338.4,332.8 218.4,343.2 "
    id="polyline136"
-   transform="translate(-28.6,5)" />
+   transform="translate(-21.1,12.5)" />
 <polygon
    style="fill:#1ea4c4"
-   points="188.8,156.8 149.6,232.8 218.4,300.8 286.4,232.8 248,156.8 218.4,126.4 "
+   points="218.4,300.8 286.4,232.8 248,156.8 218.4,126.4 188.8,156.8 149.6,232.8 "
    id="polygon138"
-   transform="translate(-28.6,5)" />
+   transform="translate(-21.1,12.5)" />
 <polyline
    style="fill:#1290ad"
    points="218.4,300.8 286.4,232.8 248,156.8 218.4,126.4 "
    id="polyline140"
-   transform="translate(-28.6,5)" />
+   transform="translate(-21.1,12.5)" />
 <polygon
    style="fill:#9adfef"
-   points="159.2,214.4 179.2,234.4 199.2,214.4 218.4,234.4 237.6,214.4 257.6,234.4 277.6,214.4 218.4,97.6 "
+   points="199.2,214.4 218.4,234.4 237.6,214.4 257.6,234.4 277.6,214.4 218.4,97.6 159.2,214.4 179.2,234.4 "
    id="polygon142"
-   transform="translate(-28.6,5)" />
+   transform="translate(-21.1,12.5)" />
 <polyline
    style="fill:#7dd4e2"
    points="218.4,234.4 237.6,214.4 257.6,234.4 277.6,214.4 218.4,97.6 "
    id="polyline144"
-   transform="translate(-28.6,5)" />
+   transform="translate(-21.1,12.5)" />
 <rect
-   x="69"
-   y="333"
+   x="76.5"
+   y="340.5"
    style="fill:#057091"
    width="288"
    height="16"
    id="rect146" />
 <circle
    style="fill:#f98d2b"
-   cx="321"
-   cy="141"
+   cx="328.5"
+   cy="148.5"
    r="37.599998"
    id="circle148" />
 <path
    style="fill:#dd6e12"
-   d="m 348.2,113.8 c 14.4,14.4 14.4,38.4 0,53.6 -14.4,15.2 -38.4,14.4 -53.6,0"
+   d="m 355.7,121.3 c 14.4,14.4 14.4,38.4 0,53.6 -14.4,15.2 -38.4,14.4 -53.6,0"
    id="path150" />
 <g
    id="g152"
-   transform="translate(-28.6,5)">
+   transform="translate(-21.1,12.5)">
 </g>
 <g
    id="g154"
-   transform="translate(-28.6,5)">
+   transform="translate(-21.1,12.5)">
 </g>
 <g
    id="g156"
-   transform="translate(-28.6,5)">
+   transform="translate(-21.1,12.5)">
 </g>
 <g
    id="g158"
-   transform="translate(-28.6,5)">
+   transform="translate(-21.1,12.5)">
 </g>
 <g
    id="g160"
-   transform="translate(-28.6,5)">
+   transform="translate(-21.1,12.5)">
 </g>
 <g
    id="g162"
-   transform="translate(-28.6,5)">
+   transform="translate(-21.1,12.5)">
 </g>
 <g
    id="g164"
-   transform="translate(-28.6,5)">
+   transform="translate(-21.1,12.5)">
 </g>
 <g
    id="g166"
-   transform="translate(-28.6,5)">
+   transform="translate(-21.1,12.5)">
 </g>
 <g
    id="g168"
-   transform="translate(-28.6,5)">
+   transform="translate(-21.1,12.5)">
 </g>
 <g
    id="g170"
-   transform="translate(-28.6,5)">
+   transform="translate(-21.1,12.5)">
 </g>
 <g
    id="g172"
-   transform="translate(-28.6,5)">
+   transform="translate(-21.1,12.5)">
 </g>
 <g
    id="g174"
-   transform="translate(-28.6,5)">
+   transform="translate(-21.1,12.5)">
 </g>
 <g
    id="g176"
-   transform="translate(-28.6,5)">
+   transform="translate(-21.1,12.5)">
 </g>
 <g
    id="g178"
-   transform="translate(-28.6,5)">
+   transform="translate(-21.1,12.5)">
 </g>
 <g
    id="g180"
-   transform="translate(-28.6,5)">
+   transform="translate(-21.1,12.5)">
 </g>
 <path
-   style="fill:none;stroke:#000000;stroke-width:10;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-   d="M 5,357 V 5 H 421 V 485 H 133 Z"
+   style="fill:none;stroke:#000000;stroke-width:25;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+   d="m 12.5,364.5 v -352 h 416 v 480 h -288 z"
    id="path333"
    sodipodi:nodetypes="cccccc" /><path
-   style="fill:none;stroke:#000000;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-   d="m 5,357 h 128 v 128 0"
+   style="fill:none;stroke:#000000;stroke-width:25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+   d="m 12.5,364.5 h 128 v 128 0"
    id="path1479" /></svg>
