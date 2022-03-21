@@ -25,6 +25,11 @@ class Settings extends Model
         parent::__construct($config);
     }
 
+
+    public function getAppId(): string {
+        return App::parseEnv($this->secretKey);
+    }
+
     public function rules()
     {
         return [
