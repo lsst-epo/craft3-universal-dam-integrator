@@ -4,6 +4,7 @@ namespace rosas\dam\models;
 
 use Craft;
 use craft\base\Model;
+// use craft\helpers\App;
 
 class Settings extends Model
 {
@@ -26,8 +27,20 @@ class Settings extends Model
     }
 
 
+    public function getRetrieveAssetMetadataEndpoint(): string {
+        return Craft::parseEnv($this->retrieveAssetMetadataEndpoint);
+    }
+
+    public function getAuthEndpoint(): string {
+        return Craft::parseEnv($this->authEndpoint);
+    }
+
+    public function getSecretKey(): string {
+        return Craft::parseEnv($this->secretKey);
+    }
+
     public function getAppId(): string {
-        return App::parseEnv($this->secretKey);
+        return Craft::parseEnv($this->appId);
     }
 
     public function rules()
@@ -38,7 +51,6 @@ class Settings extends Model
     }
 
     public function getVolumes() {
-        // return print_r(Craft::$app->getVolumes()->getAllVolumes()[0]["name"]);
         $rawVolumes = Craft::$app->getVolumes()->getAllVolumes();
         $vols = [];
         array_push($vols, array(
