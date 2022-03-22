@@ -44,13 +44,15 @@ class AssetSyncController extends Controller {
      * CREATE webhook controller
      */
     public function actionAssetCreateWebhook() {
-
+        Craft::info("'Create' webhook triggered!", "Universal DAM Integrator");
         $damId = $this->request->getBodyParam('id');
         $assetsService = new Assets();
         $res = $assetsService->saveDamAsset($damId);
         if($res == false) {
+            Craft::warning("Asset creation failed, could not fetch asset from Canto!", "Universal DAM Integrator");
             return false;
         } else {
+            Craft::info("'Create' webhook successful!", "Universal DAM Integrator");
             return true;
         }
 
@@ -60,6 +62,7 @@ class AssetSyncController extends Controller {
      * DELETE webhook controller
      */
     public function actionAssetDeleteWebhook() {
+        Craft::info("'Delete' webhook triggered!", "Universal DAM Integrator");
         $damId = $this->request->getBodyParam('id');
         $ids = $this->_getAssetIdByDamId($damId);
 
@@ -68,6 +71,8 @@ class AssetSyncController extends Controller {
             $element = ElementRecord::findOne($id);
             $element->delete();
         }
+        Craft::info("'Delete' webhook successful!", "Universal DAM Integrator");
+        return true;
     }
 
     /**
@@ -76,18 +81,24 @@ class AssetSyncController extends Controller {
     public function actionAssetUpdateWebhook() {
         $damId = $this->request->getBodyParam('id');
         $assetsService = new Assets();
-        $assetMetadata = $assetsService->getAssetMetadata($damId);
         $ids = $this->_getAssetIdByDamId($damId);
 
-        if($assetMetadata != null) {
-            foreach($ids as $id) { // Temporary code! There shouldn't be multiple craft asset records for a single DAM ID, but during dev testing there is
-                AssetMetadata::upsert($id, $assetMetadata);
-            }
-        } else {
-            return "update failed! no metadata found";
-        }
+        if($ids != null && is_array($ids) && count($ids) > 0) {
+            $assetMetadata = $assetsService->getAssetMetadata($damId);
 
-        return "success!";
+            if($assetMetadata != null) {
+                foreach($ids as $id) { // Temporary code! There shouldn't be multiple craft asset records for a single DAM ID, but during dev testing there is
+                    AssetMetadata::upsert($id, $assetMetadata);
+                }
+            } else {
+                Craft::warning("Asset update failed! No Metadata found!", "Universal DAM Integrator");
+                return false;
+            }
+            Craft::info("'Update' webhook successful!", "Universal DAM Integrator");
+            return true;
+        } else { // The asset record doesn't exist for some reason, so create it
+            $this->actionAssetCreateWebhook();
+        }
     }
 
     private static function _getAssetIdByDamId($damId) {

@@ -43,7 +43,7 @@ class Assets extends Component
         return $vols;
     }
 
-    public function saveDamAsset($damId = "hu4hj1m04p3f940us68a1g6j3f") {
+    public function saveDamAsset($damId) {
         // Ensure settings are saved before attempting any requests
         if(isset(\rosas\dam\Plugin::getInstance()->getSettings()->retrieveAssetMetadataEndpoint) &&
            isset(\rosas\dam\Plugin::getInstance()->getSettings()->authEndpoint) &&
@@ -185,7 +185,7 @@ class Assets extends Component
     public function getAssetMetadata($assetId) {
         try {
             $client = Craft::createGuzzleClient();
-            $baseUrl = \rosas\dam\Plugin::getInstance()->getSettings()->retrieveAssetMetadataEndpoint;
+            $baseUrl = \rosas\dam\Plugin::getInstance()->getSettings()->getRetrieveAssetMetadataEndpoint();
             if(substr($baseUrl, (strlen($baseUrl) - 1), strlen($baseUrl)) != '/') {
                 $baseUrl = $baseUrl . '/';
             }
@@ -215,9 +215,9 @@ class Assets extends Component
      */ 
     public function getAuthToken($validateOnly = false) : string {
         $client = Craft::createGuzzleClient();
-        $appId = \rosas\dam\Plugin::getInstance()->getSettings()->appId;
-        $secretKey = \rosas\dam\Plugin::getInstance()->getSettings()->secretKey;
-        $authEndpoint = \rosas\dam\Plugin::getInstance()->getSettings()->authEndpoint;
+        $appId = \rosas\dam\Plugin::getInstance()->getSettings()->getAppId();
+        $secretKey = \rosas\dam\Plugin::getInstance()->getSettings()->getSecretKey();
+        $authEndpoint = \rosas\dam\Plugin::getInstance()->getSettings()->getAuthEndpoint();
 
         if($appId != null &&
            $secretKey != null &&
