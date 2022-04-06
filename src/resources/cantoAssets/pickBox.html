@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+
+<html lang="en_US">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, maximum-scale=1.0, initial-scale=1, user-scalable=no">
+    <!--Prevent the default action to identify the number as phone, use <a href='tel:xxxxxxxx'></a> to identify the number -->
+    <meta name = "format-detection" content = "telephone=no">
+
+    <title>canto</title>
+    <!-- base -->
+    <script type="text/javascript" src="assets/clientlibs/vendor/jQuery/jquery-3.2.1.min.js"></script>
+    <link href="assets/clientlibs/css/base.css" rel="stylesheet">
+    <!-- jstree -->
+    <!-- <script type="text/javascript" src="assets/clientlibs/vendor/jstree/jstree.min.js"></script>
+    <link href="assets/clientlibs/vendor/jstree/themes/default/style.css" rel="stylesheet"> -->
+    <!-- bootstrap -->
+    <script type="text/javascript" src="assets/clientlibs/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <link href="assets/clientlibs/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <script type="text/javascript" src="assets/clientlibs/vendor/colorbox/jquery.colorbox-min.js"></script>
+
+    <script type="text/javascript" src="assets/clientlibs/js/main.js"></script>
+
+</head>
+
+<body class="canto-body">
+    <div class="header-section">
+        <div id="treeviewSwitch" class="library">
+            <span class="treeview-icon icon-s-Treemenu-24"></span>
+            <span class="treeview-desc">Library</span>
+        </div>
+        <div id="globalSearch" class="search-box">
+            <input type="text" placeholder="Global Search" class="search-icon">
+            <span class="icon-s-Search-20"></span>
+        </div>
+        <div id="filterSection" class="filter-section">
+            <span class="title">Type:</span>
+            <span class="type-font icon-s-AllFiles-32" data-type="allfile" title="All Files"></span>
+            <span class="type-font icon-s-Images-32 current" data-type="images" title="Images Smart Album"></span>
+            <span class="type-font icon-s-Videos-32" data-type="videos" title="Videos Smart Album"></span>
+            <span class="type-font icon-s-Audio-32" data-type="audio" title="Audio Smart Album"></span>
+            <span class="type-font icon-s-Documents-32" data-type="documents" title="Documents Smart Album"></span>
+            <span class="type-font icon-s-Presentations-32" data-type="presentations" title="Presentations Smart Album"></span>
+            <span class="type-font icon-s-Others-32" data-type="others" title="Others Smart Album"></span>
+        </div>
+    </div>
+
+    <div class="tree-view-section expanded" id="treeviewSection">
+        <div class="tree-view">
+            <ul>
+                <li id="treeviewContent">
+                    <div class="tree-whole-row"></div>
+                    <i class="icon-s-Folder_open-20px logo"></i>
+                    <a href="javascript:;" >Flight Library</a>
+                   <ul>
+                        <li>
+                            <div class="tree-whole-row"></div>
+                            <i class="icon-s-Folder_open-20px"></i>
+                            <span>Marketing</span>
+                            <ul>
+                                <li>
+                                    <div class="tree-whole-row "></div>
+                                    <i class="icon-s-Album-20px"></i>
+                                    <span>InDesign Images</span>
+                                </li>
+                                <li>
+                                    <i class="icon-s-Album-20px"></i>
+                                    <span>InDesign Images</span>
+                                </li>
+                                <li>
+                                    <i class="icon-s-Folder_open-20px"></i>
+                                    <span>InDesign Images</span>
+                                    <ul>
+                                        <li>
+                                            <i class="icon-s-Album-20px"></i>
+                                            <span>InDesign Images</span>
+                                        </li>
+                                        <li>
+                                            <i class="icon-s-Album-20px"></i>
+                                            <span>InDesign Images</span>
+                                        </li>
+                                        <li>
+                                            <i class="icon-s-Album-20px"></i>
+                                            <span>InDesign Images</span>
+                                        </li>
+                                        
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                        <i class="icon-s-Folder_open-20px"></i>
+                            <span>Branding</span>
+                            <ul>
+                                <li>
+                                    <i class="icon-s-Album-20px"></i>
+                                    <span>InDesign Images</span>
+                                </li>
+                                <li class="selected">
+                                    <i class="icon-s-Album-20px"></i>
+                                    <span>InDesign Images</span>
+                                </li>
+                                <li>
+                                    <i class="icon-s-Album-20px"></i>
+                                    <span>InDesign Images</span>
+                                </li>
+                                
+                            </ul>
+                        </li>
+                        <li>
+                            <i class="icon-s-Folder_open-20px"></i>
+                            <span>Photography</span>
+                            <ul>
+                                <li class="no-child">
+                                    <i class="icon-s-Album-20px"></i>
+                                    <span>InDesign Images</span>
+                                </li>
+                                <li>
+                                    <i class="icon-s-Album-20px"></i>
+                                    <span>InDesign Images</span>
+                                </li>
+                                <li>
+                                    <i class="icon-s-Album-20px"></i>
+                                    <span>InDesign Images</span>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+
+    <div class="body-section" id="">
+        <div id="imagesContent">
+        <div class="single-image">
+            <img src="assets/images/daji.jpg" alt="image">
+            <div class="mask-layer">
+                <span class="icon-s-Fullscreen"></span>
+            </div>
+        </div>
+        <div class="single-image">
+            <img src alt="image">
+            <div class="mask-layer">
+                <span class="icon-s-Fullscreen"></span>
+            </div>
+        </div>
+        <div class="single-image">
+            <img src="assets/images/daji.jpg" alt="image">
+            <div class="mask-layer">
+                <span class="icon-s-Fullscreen"></span>
+            </div>
+        </div>
+        <div class="single-image">
+            <img src= alt="image">
+            <div class="mask-layer">
+                <span class="icon-s-Fullscreen"></span>
+            </div>
+        </div>
+        <div class="single-image">
+            <img src="assets/images/wugen.jpg" alt="image">
+            <div class="mask-layer">
+                <span class="icon-s-Fullscreen"></span>
+            </div>
+        </div>
+        <div class="single-image">
+            <img src="assets/images/daji.jpg" alt="image">
+            <div class="mask-layer">
+                <span class="icon-s-Fullscreen"></span>
+            </div>
+        </div>
+        <div class="single-image">
+            <img src="assets/images/daji.jpg" alt="image">
+            <div class="mask-layer">
+                <span class="icon-s-Fullscreen"></span>
+            </div>
+        </div>
+        <div class="single-image">
+            <img src="assets/images/wugen.jpg" alt="image">
+            <div class="mask-layer">
+                <span class="icon-s-Fullscreen"></span>
+            </div>
+        </div>
+        <div class="single-image">
+            <img src="assets/images/daji.jpg" alt="image">
+            <div class="mask-layer">
+                <span class="icon-s-Fullscreen"></span>
+            </div>
+        </div>
+        <div class="single-image">
+            <img src="assets/images/daji.jpg" alt="image">
+            <div class="mask-layer">
+                <span class="icon-s-Fullscreen"></span>
+            </div>
+        </div>
+        <div class="single-image">
+            <img src="assets/images/wugen.jpg" alt="image">
+            <div class="mask-layer">
+                <span class="icon-s-Fullscreen"></span>
+            </div>
+        </div>
+        <div class="single-image">
+            <img src="assets/images/daji.jpg" alt="image">
+            <div class="mask-layer">
+                <span class="icon-s-Fullscreen"></span>
+            </div>
+        </div>
+    </div>
+    <div id="loadMore" class="load-more icon-s-Dropdown_16">
+        <span>Load More...</span>
+    </div>
+    </div>
+
+    <div class="loading-icon hidden" >
+        <span class="loading-icon-circle">
+            <svg width="56px"  height="56px"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="lds-rolling" style="background: none;"><circle cx="50" cy="50" fill="none" ng-attr-stroke="{{config.color}}" ng-attr-stroke-width="{{config.width}}" ng-attr-r="{{config.radius}}" ng-attr-stroke-dasharray="{{config.dasharray}}" stroke="#fdfdfd" stroke-width="10" r="35" stroke-dasharray="164.93361431346415 56.97787143782138" transform="rotate(24 50 50)"><animateTransform attributeName="transform" type="rotate" calcMode="linear" values="0 50 50;360 50 50" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animateTransform></circle></svg>
+        </span>
+    </div>
+    <div class="" style="display:none;">
+        <div id="viewImageModal" class="view-image-modal ">
+            <div class="page-mask"></div>
+            <img src="assets/images/wugen.jpg" alt="image">
+            <span class="close-btn icon-s-closeicon-16px"></span>
+        </div>
+
+
+
+        <div id="imageDetailModal" class="image-detail-modal ">
+            <div class="page-mask"></div>
+            <span class="close-btn icon-s-closeicon-16px"></span>
+            <div class="detail-section">
+                <div class="detail-title">Image Detail</div>
+                <div class="detail-li">
+                    <span class="title">name:</span>
+                    <span class="content">zhaosi.jpg</span>
+                </div>
+                <div class="detail-li">
+                    <span class="title">size:</span>
+                    <span class="content">36044k</span>
+                </div>
+                <div class="detail-li">
+                    <span class="title">lastUploaded:</span>
+                    <span class="content">20180423081736585</span>
+                </div>
+                <div class="detail-li">
+                    <span class="title">approvalStatus:</span>
+                    <span class="content">Pending</span>
+                </div>
+            </div>
+            <div class="insert-btn">Insert into Post</div>
+        </div>
+    </div>
+
+    <div class="logout-btn" id="logoutBtn" title="logout">
+        <span class="icon-s-logoout-24"></span>
+    </div>
+
+</body>
+</html>
+

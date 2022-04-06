@@ -9,6 +9,7 @@ use yii\base\Event;
 use craft\web\twig\variables\CraftVariable;
 use rosas\dam\volumes\DAMVolume;
 use rosas\dam\services\Assets;
+use rosas\dam\fields\DAMAsset;
 use craft\services\Assets as CraftAssets;
 use yii\base\Behavior;
 use craft\events\GetAssetThumbUrlEvent;
@@ -17,6 +18,7 @@ use rosas\dam\gql\queries\DAMAssetQuery;
 use craft\services\Gql;
 use craft\events\RegisterGqlQueriesEvent;
 use craft\web\UrlManager;
+use craft\services\Fields;
 
 class Plugin extends \craft\base\Plugin
 {
@@ -124,6 +126,15 @@ class Plugin extends \craft\base\Plugin
             UrlManager::EVENT_REGISTER_SITE_URL_RULES,
             function (RegisterUrlRulesEvent $event) {
                 $event->rules['universal-dam-integrator/mass-sync'] = 'universal-dam-integrator/asset-sync/asset-mass-sync-webhook';
+            }
+        );
+
+        // Register the custom field type
+        Event::on(
+            Fields::class,
+            Fields::EVENT_REGISTER_FIELD_TYPES,
+            function(RegisterComponentTypesEvent $event) {
+                $event->types[] = DAMAsset::class;
             }
         );
     }

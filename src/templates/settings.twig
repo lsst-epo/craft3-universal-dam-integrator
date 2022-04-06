@@ -5,31 +5,35 @@
 
 <p class="notice with-icon">All of the below fields can be set with environment variables, just ensure they are preceded with a '$', e.g.: "$DAM_APP_ID"</p>
 
-{{ forms.textField({
+{{ forms.autosuggestField({
     first: true,
     label: "App ID",
     name: 'appId',
-    value: settings.appId
+    value: settings.appId,
+    suggestEnvVars: true
 }) }}
 
-{{ forms.textField({
+{{ forms.autosuggestField({
     first: true,
     label: "Secret Key",
     name: 'secretKey',
-    value: settings.secretKey
+    value: settings.secretKey,
+    suggestEnvVars: true
 }) }}
 
-{{ forms.textField({
+{{ forms.autosuggestField({
     label: "Authentication Endpoint",
     name: 'authEndpoint',
-    value: settings.authEndpoint
+    value: settings.authEndpoint,
+    suggestEnvVars: true
 }) }}
 <p>If the app ID or secret key is needed in the URL include it as <strong>{appId}</strong> or <strong>{secretKey}</strong> with no spaces.</p>
 
-{{ forms.textField({
+{{ forms.autosuggestField({
     label: "Retrieve One Asset Endpoint",
     name: 'retrieveAssetMetadataEndpoint',
-    value: settings.retrieveAssetMetadataEndpoint
+    value: settings.retrieveAssetMetadataEndpoint,
+    suggestEnvVars: true
 }) }}
 
 <div class="field">
