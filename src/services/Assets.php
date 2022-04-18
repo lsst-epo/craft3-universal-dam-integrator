@@ -54,18 +54,42 @@ class Assets extends Component
                 if($this->authToken != null && !empty($this->authToken)) {
                     $this->assetMetadata = $this->getAssetMetadata($damId);
                     if(in_array('errorMessage', $this->assetMetadata)) {
-                        return false;
+                        return [
+                            "status" => "error",
+                            "message" => "An error occurred while fetching the asset from Canto!",
+                            "details" => [
+                                "error" => $this->assetMetadata
+                            ]
+                        ];
                     } else {
                         return $this->saveAssetMetadata();
                     }
                 }
             } catch (\Exception $e) {
                 Craft::info($e);
-                return false;
+                return [
+                    "status" => "error",
+                    "message" => "An error occurred while attempting to fetch the asset from Canto!",
+                    "details" => [
+                        "error" => $e,
+                        "errorStr" => strval($e),
+                        "errorMessage" => $e->getMessage(),
+                        "errorLineNumber" => $e->getLine()
+                    ]
+                ];
             }
 
         } else {
-            return false;
+            return [
+                "status" => "error",
+                "message" => "The plugin is configured incorrectly!",
+                "details" => [
+                    "retrieveAssetMetadataEndpointIsSet" => isset(\rosas\dam\Plugin::getInstance()->getSettings()->retrieveAssetMetadataEndpoint),
+                    "authEndpointIsSet" => isset(\rosas\dam\Plugin::getInstance()->getSettings()->authEndpoint),
+                    "secretKeyIsSet" => isset(\rosas\dam\Plugin::getInstance()->getSettings()->secretKey),
+                    "appIdIsSet" => isset(\rosas\dam\Plugin::getInstance()->getSettings()->appId)
+                ]
+            ];
         }
         
     }
@@ -199,7 +223,7 @@ class Assets extends Component
             $response = $client->request("GET", $getAssetMetadataEndpoint, ['headers' => ["Authorization" => $bearerToken]]);
             $body = $response->getBody();
 
-            if(!is_array(JSON::decodeIfJson($body))) {
+            if(!is_array(Json::decodeIfJson($body))) {
                 return Json::decodeIfJson("{ 'errorMessage' : 'Asset metadata retrieval failed!'}");
             } else {
                 return Json::decodeIfJson($body);

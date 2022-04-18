@@ -48,13 +48,14 @@ class AssetSyncController extends Controller {
         $damId = $this->request->getBodyParam('id');
         $assetsService = new Assets();
         $res = $assetsService->saveDamAsset($damId);
-        if($res == false) {
-            Craft::warning("Asset creation failed, could not fetch asset from Canto!", "Universal DAM Integrator");
-            return false;
-        } else {
-            Craft::info("'Create' webhook successful!", "Universal DAM Integrator");
-            return true;
-        }
+        return Json::encode($res);
+        // if($res == false) {
+        //     Craft::warning("Asset creation failed, could not fetch asset from Canto!", "Universal DAM Integrator");
+        //     return false;
+        // } else {
+        //     Craft::info("'Create' webhook successful!", "Universal DAM Integrator");
+        //     return true;
+        // }
 
     }
 
