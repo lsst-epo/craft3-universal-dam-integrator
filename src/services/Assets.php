@@ -98,7 +98,8 @@ class Assets extends Component
         $db = Craft::$app->getDb();
         $pathArr = explode('/', $path);
         $parentId = null;
-        Craft::info("Path to asset in Canto : " + $path, "UDAMI");
+        Craft::info("Path to asset in Canto : ", "UDAMI");
+        Craft::info($path);
         foreach($pathArr as $folderName) {
             $query = new Query;
             Craft::info("Looking up if existing folder record exists", "UDAMI");
@@ -114,7 +115,7 @@ class Assets extends Component
                 $parentId = $damVolId;
             } else {
                 if($result != null) {
-                    Craft::info("Found existing record : " + $result["id"], "UDAMI");
+                    Craft::info("Found existing record : " . $result["id"], "UDAMI");
                     if(array_search($folderName, $pathArr) != (count($pathArr)-1)) {
                         $parentId = $result["id"];
                     }
@@ -132,7 +133,7 @@ class Assets extends Component
                                     ->one();
 
             $parentId = $newFolderRecord["id"];
-            Craft::info("New folder record : " + $parentId, "UDAMI");
+            Craft::info("New folder record : " . $parentId, "UDAMI");
 
         }
 
