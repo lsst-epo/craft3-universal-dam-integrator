@@ -71,7 +71,7 @@ class Assets extends Component
                     "status" => "error",
                     "message" => "An error occurred while attempting to fetch the asset from Canto!",
                     "details" => [
-                        "error" => $e,
+                        "error" => $e->getTraceAsString(),
                         "errorStr" => strval($e),
                         "errorMessage" => $e->getMessage(),
                         "errorLineNumber" => $e->getLine()
@@ -98,9 +98,10 @@ class Assets extends Component
         $db = Craft::$app->getDb();
         $pathArr = explode('/', $path);
         $parentId = null;
-
+        Craft::info("Path to asset in Canto : " + $path, "UDAMI");
         foreach($pathArr as $folderName) {
             $query = new Query;
+            Craft::info("Looking up if existing folder record exists", "UDAMI");
             $result = $query->select('id, parentId')
                         ->from('volumefolders')
                         ->where("name = :name", [ ":name" => $folderName])
@@ -113,6 +114,7 @@ class Assets extends Component
                 $parentId = $damVolId;
             } else {
                 if($result != null) {
+                    Craft::info("Found existing record : " + $result["id"], "UDAMI");
                     if(array_search($folderName, $pathArr) != (count($pathArr)-1)) {
                         $parentId = $result["id"];
                     }
@@ -123,12 +125,15 @@ class Assets extends Component
             $newFolder->volumeId = Craft::$app->getVolumes()->getVolumeByHandle($getAssetMetadataEndpoint = Plugin::getInstance()->getSettings()->damVolume)["id"];
             $parentId = AssetsService::storeFolderRecord($newFolder);
 
+            Craft::info("About to lookup new folder record", "UDAMI");
             $newFolderRecord = $query->select('id, parentId')
                                     ->from('volumefolders')
                                     ->where("name = :name", [ ":name" => $folderName])
                                     ->one();
 
             $parentId = $newFolderRecord["id"];
+            Craft::info("New folder record : " + $parentId, "UDAMI");
+
         }
 
         return $parentId;
@@ -144,17 +149,11 @@ class Assets extends Component
                             ->where("name = :name", [ ":name" => $damVolume["name"]])
                             ->one();
 
-        $quickTest = Craft::$app->getVolumes()->getVolumeByHandle($getAssetMetadataEndpoint = Plugin::getInstance()->getSettings()->damVolume);
-
         $newAsset = new Asset();
         $newAsset->avoidFilenameConflicts = true;
         $newAsset->setScenario(Asset::SCENARIO_CREATE);
-        //$filename = strtolower($this->assetMetadata["url"]["HighJPG"]); //directUrlOriginal
         $filename = strtolower($this->assetMetadata["url"]["directUrlOriginal"]);
-        // https://rubin.canto.com/api_binary/v1/image/36i2ue3knh54v6pleiaoaj086a/highjpg
         $newAsset->filename = str_replace("https://rubin.canto.com/direct/", "", $filename);
-        //$newAsset->filename = str_replace("https://rubin.canto.com/api_binary/v1/image/", "", $filename);
-        // $newAsset->filename = $this->assetMetadata["name"];
         $newAsset->kind = "image";
         $newAsset->setHeight($this->assetMetadata["height"]);
         $newAsset->setWidth($this->assetMetadata["width"]);
@@ -163,7 +162,7 @@ class Assets extends Component
         if(array_key_exists("relatedAlbums", $this->assetMetadata) &&
            count($this->assetMetadata["relatedAlbums"]) > 0 &&
            array_key_exists("namePath", $this->assetMetadata["relatedAlbums"][0])) {
-
+            Craft::info("About to propagate folders", "UDAMI");
             $newAsset->folderId = $this->_propagateFolders($this->assetMetadata["relatedAlbums"][0]["namePath"], $damVolResult["id"]);
         } else {
             $newAsset->folderId = $damVolResult["id"];
@@ -174,9 +173,20 @@ class Assets extends Component
         $now = new DateTime();
         $newAsset->dateModified = $now->format('Y-m-d H:i:s');
         $elements = new Elements();
+        Craft::info("About to save element", "UDAMI");
+
         $success = $elements->saveElement($newAsset, false, true, true, $this->assetMetadata);
 
-        return $success;
+        if($success) {
+            return [
+                "status" => "success"
+            ];
+        } else {
+            return [
+                "status" => "error",
+                "message" => "Error while attempting to save the asset metadata!"
+            ];
+        }
     }
 
     /**
@@ -224,12 +234,16 @@ class Assets extends Component
             $body = $response->getBody();
 
             if(!is_array(Json::decodeIfJson($body))) {
-                return Json::decodeIfJson("{ 'errorMessage' : 'Asset metadata retrieval failed!'}");
+                return [
+                    "status" => "error",
+                    'errorMessage' => 'Asset metadata retrieval failed!'
+                ];
             } else {
                 return Json::decodeIfJson($body);
             }
             
         } catch (Exception $e) {
+            Craft::info("An exception occurred in getAssetMetadata()", "UDAMI");
             return $e;
         }
     }
@@ -269,10 +283,18 @@ class Assets extends Component
         
                 return $authToken;
             } else {
-                return "";
+                Craft::info("An exception occurred in getAuthToken()", "UDAMI");
+                return [
+                    "status" => "error",
+                    'errorMessage' => 'An error occurred fetching auth token!'
+                ];
             }
         } else {
-            return "";
+            Craft::info("An exception occurred in getAuthToken()", "UDAMI");
+            return [
+                "status" => "error",
+                'errorMessage' => 'Plugin is not configured to authenticate!'
+            ];
         }
 
     }
