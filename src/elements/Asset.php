@@ -22,6 +22,8 @@ class Asset extends Element {
 
     public $assetId;
 
+    public $asset_id;
+
     public $dam_meta_value;
 
     public $damMetadata;
@@ -192,12 +194,13 @@ class Asset extends Element {
     
     public function __construct($config = []) {
         if($config != null) {
-            $this->dam_meta_key = $config["dam_meta_key"];
-            $this->dam_meta_value = $config["dam_meta_value"];
-            if(array_key_exists('damMetadata', $config)) {
+            $this->dam_meta_key = (array_key_exists("dam_meta_key", $config)) ? $config["dam_meta_key"] : null ;
+            $this->dam_meta_value = (array_key_exists("dam_meta_value", $config)) ? $config["dam_meta_value"] : null;
+            if(array_key_exists('damMetadata', $config)) {  
                 $this->damMetadata = $config['damMetadata'];
             }  
-            $this->id = $config["id"];
+            $this->id = (array_key_exists("id", $config)) ? $config["id"] : null;
+            $this->assetId = (array_key_exists("assetId", $config)) ? $config["assetId"] : null;
         }
 
         parent::__construct();
@@ -264,7 +267,7 @@ class Asset extends Element {
 
         if (!$this->_width || !$this->_height) {
             if ($this->getScenario() !== self::SCENARIO_CREATE) {
-                Craft::warning("maddie - Asset $this->id is missing its width or height", __METHOD__);
+                Craft::warning("Asset $this->id is missing its width or height", __METHOD__);
             }
             return [null, null];
         }

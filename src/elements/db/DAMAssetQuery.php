@@ -191,14 +191,12 @@ class DAMAssetQuery extends ElementQuery {
     private static $_supportsUploaderParam;
 
     public function __construct(string $elementType, array $config = [], $assetId = null) {
-        Craft::info("tardy - inside of DAMAssetQuery::__construct()", "rosas");
+
         $this->assetId = $assetId;
         parent::__construct($elementType, $config);
     }
   
     public function populate($rows) {
-        Craft::info("tardy - inside of DAMAssetQuery::populate()", "rosas");
-        Craft::info($rows, "rosas");
         return parent::populate($this->normalizeMetadata($rows));
     }
 
@@ -209,7 +207,7 @@ class DAMAssetQuery extends ElementQuery {
         $currArr = null;
         foreach ($rows as $row) {
             if($row['id'] != $prevId) {
-                if($currArr != null) {
+                if($currArr != null && $prevId != null) {
                     array_push($normalizedRows, $currArr);
                 }
                 $prevId = $row['id'];
@@ -218,6 +216,7 @@ class DAMAssetQuery extends ElementQuery {
                     $meta = new Metadata([]);
                     $meta->metadataKey = $row["dam_meta_key"];
                     $meta->metadataValue = $row["dam_meta_value"];
+                    $currArr["assetId"] = $row["assetId"]; // To-do: Come up with a better workflow so the UI doesn't have to sort this out
                     $currArr['damMetadata'] = [$meta];
                 }
             } else {
@@ -225,11 +224,11 @@ class DAMAssetQuery extends ElementQuery {
                     $meta = new Metadata([]);
                     $meta->metadataKey = $row["dam_meta_key"];
                     $meta->metadataValue = $row["dam_meta_value"];
+                    $currArr["assetId"] = $row["assetId"]; // To-do: Come up with a better workflow so the UI doesn't have to sort this out
                     array_push($currArr["damMetadata"], $meta);
                 }
             }
         }
-
         return $normalizedRows;
     }
 
@@ -311,9 +310,9 @@ class DAMAssetQuery extends ElementQuery {
         ]);
 
         // Refine by ID
-        if($this->assetId != null) {
-            $this->query->andWhere(['assets.id' => $damId]);
-        }
+        // if($this->assetId != null) {
+        //     $this->query->andWhere(['assets.id' => $damId]);
+        // }
         
 
         if (self::_supportsUploaderParam()) {

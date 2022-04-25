@@ -76,6 +76,11 @@ class DAMAssetInterface extends ElementInterface {
                 'name' => 'damMetadata',
                 'type' => Type::listOf(GqlEntityRegistry::getEntity(Metadata::getType())),
                 'description' => 'Gets the key-value from the dam metadata table.',
+            ],
+            'assetId' => [
+                'name' => 'assetId',
+                'type' => Type::int(),
+                'description' => 'Asset ID associated to metadata',
             ]
         ]), self::getName());
     }
