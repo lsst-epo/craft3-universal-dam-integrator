@@ -1,6 +1,6 @@
 /* Tue Mar 26 2019 10:39:34 GMT+0800 (China Standard Time) */
 /* module */
-@font-face { font-family: 'icomoon_flight_01'; src: url("./settingFonts/icomoon_flight_01.eot?xm1ff0"); src: url("./settingFonts/icomoon_flight_01.eot?xm1ff0#iefix") format("embedded-opentype"), url("./settingFonts/icomoon_flight_01.ttf?xm1ff0") format("truetype"), url("./settingFonts/icomoon_flight_01.woff?xm1ff0") format("woff"), url("./settingFonts/icomoon_flight_01.svg?xm1ff0#icomoon_flight_01") format("svg"); font-weight: normal; font-style: normal; }
+@font-face { font-family: 'icomoon_flight_01'; src: url("./icomoon_flight_01.eot?xm1ff0"); src: url("./icomoon_flight_01.eot?xm1ff0#iefix") format("embedded-opentype"), url("./icomoon_flight_01.ttf?xm1ff0") format("truetype"), url("./icomoon_flight_01.woff?xm1ff0") format("woff"), url("./icomoon_flight_01.svg?xm1ff0#icomoon_flight_01") format("svg"); font-weight: normal; font-style: normal; }
 
 [class^="icon-"], [class*=" icon-"] { font-family: 'icomoon_flight_01' !important; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; line-height: 1; cursor: pointer; /* Better Font Rendering =========== */ -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
@@ -390,7 +390,7 @@
 
 .icon-download:before { content: "\77"; }
 
-@font-face { font-family: 'icomoon'; src: url("./settingFonts/icomoon.eot?n9woxf"); src: url("./settingFonts/icomoon.eot?n9woxf#iefix") format("embedded-opentype"), url("./settingFonts/icomoon.ttf?n9woxf") format("truetype"), url("./settingFonts/icomoon.woff?n9woxf") format("woff"), url("./settingFonts/icomoon.svg?n9woxf#icomoon") format("svg"); font-weight: normal; font-style: normal; }
+@font-face { font-family: 'icomoon'; src: url("./icomoon.eot?n9woxf"); src: url("./icomoon.eot?n9woxf#iefix") format("embedded-opentype"), url("./icomoon.ttf?n9woxf") format("truetype"), url("./icomoon.woff?n9woxf") format("woff"), url("./icomoon.svg?n9woxf#icomoon") format("svg"); font-weight: normal; font-style: normal; }
 
 [class^="icon-s-"], [class*=" icon-s-"] { /* use !important to prevent issues with browser extensions that change fonts */ font-family: 'icomoon' !important; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; line-height: 1; /* Better Font Rendering =========== */ -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 

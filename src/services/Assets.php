@@ -98,11 +98,8 @@ class Assets extends Component
         $db = Craft::$app->getDb();
         $pathArr = explode('/', $path);
         $parentId = null;
-        Craft::info("Path to asset in Canto : ", "UDAMI");
-        Craft::info($path);
         foreach($pathArr as $folderName) {
             $query = new Query;
-            Craft::info("Looking up if existing folder record exists", "UDAMI");
             $result = $query->select('id, parentId')
                         ->from('volumefolders')
                         ->where("name = :name", [ ":name" => $folderName])
@@ -115,7 +112,6 @@ class Assets extends Component
                 $parentId = $damVolId;
             } else {
                 if($result != null) {
-                    Craft::info("Found existing record : " . $result["id"], "UDAMI");
                     if(array_search($folderName, $pathArr) != (count($pathArr)-1)) {
                         $parentId = $result["id"];
                     }
@@ -126,14 +122,12 @@ class Assets extends Component
             $newFolder->volumeId = Craft::$app->getVolumes()->getVolumeByHandle($getAssetMetadataEndpoint = Plugin::getInstance()->getSettings()->damVolume)["id"];
             $parentId = AssetsService::storeFolderRecord($newFolder);
 
-            Craft::info("About to lookup new folder record", "UDAMI");
             $newFolderRecord = $query->select('id, parentId')
                                     ->from('volumefolders')
                                     ->where("name = :name", [ ":name" => $folderName])
                                     ->one();
 
             $parentId = $newFolderRecord["id"];
-            Craft::info("New folder record : " . $parentId, "UDAMI");
 
         }
 

@@ -11,6 +11,7 @@ use craft\records\Element as ElementRecord;
 use rosas\dam\services\Assets;
 use rosas\dam\db\AssetMetadata;
 use rosas\dam\models\Constants;
+use rosas\dam\fields\DAMAsset;
 
 class AssetSyncController extends Controller {
 
@@ -41,6 +42,79 @@ class AssetSyncController extends Controller {
     public $allowAnonymous = self::ALLOW_ANONYMOUS_LIVE;
 
     /**
+     * DAM Asset upload controller
+     */
+    public function actionDamAssetRemoval() {
+        Craft::info("DAM Asset upload removal triggered!", "UDAMI");
+        $elementId = $this->request->getBodyParam('elementId');
+
+        // Update the damAsset field with the newly uploaded asset
+        $db = Craft::$app->getDb();
+        try {
+            $db->createCommand()
+            ->update('{{content}}',  [
+                '"field_damAsset_cqvmuaql"' => null
+            ],
+            '"elementId" = :elementId',
+            [
+                ":elementId" => intval($elementId)
+            ])
+            ->execute();
+
+            return Json::encode([
+                "status" => "success"
+            ]);
+    
+        } catch (\Exception $e) {
+            return Json::encode([
+                "status" => "error"
+            ]);
+        }
+
+        
+    }
+
+    /**
+     * DAM Asset upload controller
+     */
+    public function actionDamAssetUpload() {
+        Craft::info("DAM Asset upload triggered!", "UDAMI");
+        $damId = $this->request->getBodyParam('cantoId');
+        $fieldId = $this->request->getBodyParam('fieldId');
+        $elementId = $this->request->getBodyParam('elementId');
+
+        $assetsService = new Assets();
+        $res = $assetsService->saveDamAsset($damId);
+
+        $damFieldService = new DAMAsset();
+
+        $assetId = $this->_getAssetIdByDamId($damId)[0];
+        $metadata = $damFieldService->getAssetMetadataByAssetId($assetId);
+        if(count($metadata) > 0) {
+            $db = Craft::$app->getDb();
+
+            // Update the damAsset field with the newly uploaded asset
+            $test = $db->createCommand()
+            ->update('{{content}}',  [
+                '"field_damAsset_cqvmuaql"' => $metadata["assetId"]
+            ],
+            '"elementId" = :elementId',
+            [
+                ":elementId" => intval($elementId)
+            ])
+            ->execute();
+
+        }
+
+        return Json::encode([
+            "canto_id_from_ui" => $damId,
+            "field_id_from_ui" => $fieldId,
+            "element_id_from_ui" => $elementId,
+            "asset_thumbnail" => $metadata["thumbnailUrl"]
+        ]);
+    }
+
+    /**
      * CREATE webhook controller
      */
     public function actionAssetCreateWebhook() {
@@ -49,14 +123,6 @@ class AssetSyncController extends Controller {
         $assetsService = new Assets();
         $res = $assetsService->saveDamAsset($damId);
         return Json::encode($res);
-        // if($res == false) {
-        //     Craft::warning("Asset creation failed, could not fetch asset from Canto!", "Universal DAM Integrator");
-        //     return false;
-        // } else {
-        //     Craft::info("'Create' webhook successful!", "Universal DAM Integrator");
-        //     return true;
-        // }
-
     }
 
     /**
@@ -113,4 +179,5 @@ class AssetSyncController extends Controller {
         }
         return $ids;
     }
+
 }

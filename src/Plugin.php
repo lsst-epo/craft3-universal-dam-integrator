@@ -129,6 +129,24 @@ class Plugin extends \craft\base\Plugin
             }
         );
 
+        // Register the webhook endpoints DAM asset upload controller
+        Event::on(
+            UrlManager::class,
+            UrlManager::EVENT_REGISTER_SITE_URL_RULES,
+            function (RegisterUrlRulesEvent $event) {
+                $event->rules['universal-dam-integrator/dam-asset-upload'] = 'universal-dam-integrator/asset-sync/dam-asset-upload';
+            }
+        );
+
+        // Register the webhook endpoints DAM asset removal controller
+        Event::on(
+            UrlManager::class,
+            UrlManager::EVENT_REGISTER_SITE_URL_RULES,
+            function (RegisterUrlRulesEvent $event) {
+                $event->rules['universal-dam-integrator/dam-asset-removal'] = 'universal-dam-integrator/asset-sync/dam-asset-removal';
+            }
+        );
+
         // Register the custom field type
         Event::on(
             Fields::class,

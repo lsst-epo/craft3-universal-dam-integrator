@@ -5,13 +5,17 @@ var _tokenType = "";
 var _tenants = "randy.flightbycanto.com";
 var cantoAPI = {};
 var _APIHeaders = {};
-var self = {};
+// var self = {};
 var searchedBy = ""; //bySearch bytree byScheme''
 var currentImageList = [];
 var singleCountLoad = 50;
 var apiNextStart = 0;
 var isLoadingComplete = false;
 var _formatDistrict = '';
+
+// $(document).ready(function() {
+//     self = $("#cantoViewBody");
+// });
 /* -----------------canto API start-------------------------------------------------------------*/
 
 function setToken(tokenInfo){
@@ -111,7 +115,7 @@ cantoAPI.getHugeRedirectURL = function(previewURL, ID) {
         url: url,
         error: function(request) {},
         success: function(data) {
-            var $viewImageModal = self.find("#imageBox");
+            var $viewImageModal = $("#cantoViewBody").find("#imageBox");
             $viewImageModal.find("img").attr("src", data);
             // $("imgbox#" + ID).attr('src',data);
             // $("img#" + ID).closest('.single-image').data("xurl", data)
@@ -229,28 +233,6 @@ cantoAPI.insertImage = function(imageArray){
     var data = {};
     data.type = "cantoInsertImage";
     data.assetList = [];
-    // for(var i = 0; i < imageArray.length; i++){
-    //     var downloadUrl = imageArray[i].url + "?Authorization=" + _accessToken;
-    //     var previewURI= imageArray[i].url +"/directuri";
-    //     var originalUrl = "";
-    //      $.ajax({
-    //         type: "GET",
-    //         headers:_APIHeaders,
-    //         url: previewURI,
-    //         // data: data,
-    //         async: false,
-    //         error: function(request) {
-    //                 alert("get original Url error");
-    //         },
-    //         success: function(originalUrl) {
-    //             var assetObj = {};
-    //             assetObj.downloadurl = downloadUrl;
-    //             assetObj.originalUrl = originalUrl;
-    //             assetObj.fileName = imageArray[i].fileName;
-    //             data.assetList.push(assetObj);
-    //         }
-    //     });
-    // }
 
     var url = "https://" + _tenants + "/api_binary/v1/batch/directuri";
     $.ajax({
@@ -265,16 +247,39 @@ cantoAPI.insertImage = function(imageArray){
                 alert("get original Url error");
         },
         success: function(resp) {
-        for(var i=0; i<resp.length;i++)
-        {
-        	for(var j=0;j<imageArray.length;j++)
-        		{
-        		if(resp[i].id==imageArray[j].id)
+            for(var i=0; i<resp.length;i++)
+            {
+                for(var j=0;j<imageArray.length;j++)
+                    {
+                    if(resp[i].id==imageArray[j].id)
 
-        			resp[i].size=imageArray[j].size;
-        		}
+                        resp[i].size=imageArray[j].size;
+                    }
 
-        }
+            }
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                url: "/universal-dam-integrator/dam-asset-upload",
+                data: JSON.stringify({
+                    cantoId: resp[0].id,
+                    fieldId: window.frameElement.getAttribute("data-field"),
+                    elementId: window.frameElement.getAttribute("data-element")
+                }),
+                error: function(req) {
+                    console.log("some crazy error happened?!!?");
+                },
+                success: function(resp) {
+                    let targetWindow = parent;
+                    let data = {};
+                    data.type = "closeModal";
+                    data.thumbnailUrl = JSON.parse(resp)["asset_thumbnail"];
+                    targetWindow.postMessage(data, '*');
+                }
+            });
+
+
             // var assetObj = {};
             // assetObj.downloadurl = downloadUrl;
             // assetObj.originalUrl = originalUrl;
@@ -293,7 +298,7 @@ cantoAPI.insertImage = function(imageArray){
 /* -----------------canto API end--------------------------------------------------------*/
 
 $(document).ready(function(){
-    self = $("#cantoViewBody");
+    // $("#cantoViewBody") = $("#cantoViewBody");
     getFrameDom();
     addEventListener();
     getTokenInfo();
@@ -307,8 +312,8 @@ $(document).ready(function(){
         setToken(tokenInfo);
         treeviewDataHandler();
         //init -- get image list
-        var initSchme = self.find(".type-font.current").data("type");
-        self.find("#globalSearch input").val("");
+        var initSchme = $("#cantoViewBody").find(".type-font.current").data("type");
+        $("#cantoViewBody").find("#globalSearch input").val("");
         getImageInit(initSchme);
         }
     };
@@ -370,14 +375,14 @@ function addEventListener() {
         $(".type-font").removeClass("current");
         $(this).addClass("current");
         var type = $(this).data("type");
-        self.find("#globalSearch input").val("");
-        self.find("#treeviewSection ul li").removeClass("selected");
+        $("#cantoViewBody").find("#globalSearch input").val("");
+        $("#cantoViewBody").find("#treeviewSection ul li").removeClass("selected");
 
         var data = {};
-        data.scheme = self.find(".type-font.current").data("type");
+        data.scheme = $("#cantoViewBody").find(".type-font.current").data("type");
         data.keywords = "";
-        self.find("#imagesContent").html("");
-        self.find("#imagesContent").scrollTop(0);
+        $("#cantoViewBody").find("#imagesContent").html("");
+        $("#cantoViewBody").find("#imagesContent").scrollTop(0);
         isLoadingComplete = false;
         currentImageList = [];
         cantoAPI.getFilterList(data, imageListDisplay);
@@ -386,18 +391,18 @@ function addEventListener() {
     .on("click","#selectAllBtn",function(e){
         // var isAllSelectedMode = $(this).hasClass("all-selected");
         // if(isAllSelectedMode){
-            self.find('.single-image .select-box').removeClass("icon-s-Ok2_32");
-            self.find(".single-image").removeClass("selected");
+            $("#cantoViewBody").find('.single-image .select-box').removeClass("icon-s-Ok2_32");
+            $("#cantoViewBody").find(".single-image").removeClass("selected");
         // } else {
-        //     self.find('.single-image .select-box').addClass("icon-s-Ok2_32");
-        //     self.find(".single-image").addClass("selected");
+        //     $("#cantoViewBody").find('.single-image .select-box').addClass("icon-s-Ok2_32");
+        //     $("#cantoViewBody").find(".single-image").addClass("selected");
         // }
         handleSelectedMode();
     })
     .on("click","#insertAssetsBtn",function(e){
-        self.find(".loading-icon").removeClass("hidden");
+        $("#cantoViewBody").find(".loading-icon").removeClass("hidden");
         var assetArray = [];
-        var selectedArray = self.find(".single-image .icon-s-Ok2_32").closest(".single-image");
+        var selectedArray = $("#cantoViewBody").find(".single-image .icon-s-Ok2_32").closest(".single-image");
         for(var i = 0; i < selectedArray.length; i++){
             var obj = {};
             // obj.url = $(selectedArray[i]).data("xurl");
@@ -413,19 +418,19 @@ function addEventListener() {
         e.cancelBubble = true;
         e.stopPropagation();
         e.preventDefault();
-        self.find(".loading-icon").removeClass("hidden");
+        $("#cantoViewBody").find(".loading-icon").removeClass("hidden");
         var targetURL = $(e.currentTarget).closest(".single-image").data("xurl");
         // cantoAPI.getOriginalResourceUrl(targetURL, displayFullyImage);
         var previewURL = targetURL + "?Authorization=" + _accessToken;
         displayFullyImage(previewURL);
     })
     .on("click",".single-image",function(e){
-        self.find(".loading-icon").removeClass("hidden");
+        $("#cantoViewBody").find(".loading-icon").removeClass("hidden");
         //display image
         var targetURL = $(e.currentTarget).closest(".single-image").data("xurl");
         var targetID = $(e.currentTarget).closest(".single-image").data("id");
         // var previewURL = targetURL + "?Authorization=" + _accessToken;
-        // var $viewImageModal = self.find("#imageBox");
+        // var $viewImageModal = $("#cantoViewBody").find("#imageBox");
         // $viewImageModal.find("img").attr("src", previewURL);
         cantoAPI.getHugeRedirectURL(targetURL, targetID);
         //display detail
@@ -447,11 +452,11 @@ function addEventListener() {
         // childList.toggleClass("hidden");
         if("treeviewContent" == $(e.currentTarget)[0].id){
             //load init image list.
-            self.find("#globalSearch input").val("");
-            self.find("#treeviewSection ul li").removeClass("selected");
-            self.find(".type-font").removeClass("current");
-            self.find("#imagesContent").html("");
-            self.find("#imagesContent").scrollTop(0);
+            $("#cantoViewBody").find("#globalSearch input").val("");
+            $("#cantoViewBody").find("#treeviewSection ul li").removeClass("selected");
+            $("#cantoViewBody").find(".type-font").removeClass("current");
+            $("#cantoViewBody").find("#imagesContent").html("");
+            $("#cantoViewBody").find("#imagesContent").scrollTop(0);
             currentImageList = [];
             searchedBy = "";
             isLoadingComplete = false;
@@ -472,11 +477,11 @@ function addEventListener() {
 
         }else{
             $("#treeviewSection ul li").removeClass("selected");
-            self.find(".type-font").removeClass("current");
+            $("#cantoViewBody").find(".type-font").removeClass("current");
             $(e.currentTarget).addClass("selected");
-            self.find("#globalSearch input").val("");
-            self.find("#imagesContent").html("");
-            self.find("#imagesContent").scrollTop(0);
+            $("#cantoViewBody").find("#globalSearch input").val("");
+            $("#cantoViewBody").find("#imagesContent").html("");
+            $("#cantoViewBody").find("#imagesContent").scrollTop(0);
             currentImageList = [];
             isLoadingComplete = false;
             searchedBy = "bytree";
@@ -486,14 +491,14 @@ function addEventListener() {
 
     })
     .on("click","#globalSearchBtn",function(e){
-        var value = self.find("#globalSearch input").val();
+        var value = $("#cantoViewBody").find("#globalSearch input").val();
         if(!value){
             //load init image list.
-            self.find("#treeviewSection ul li").removeClass("selected");
-            var initSchme = self.find(".type-font.current").data("type");
-            self.find("#globalSearch input").val("");
-            self.find("#imagesContent").html("");
-            self.find("#imagesContent").scrollTop(0);
+            $("#cantoViewBody").find("#treeviewSection ul li").removeClass("selected");
+            var initSchme = $("#cantoViewBody").find(".type-font.current").data("type");
+            $("#cantoViewBody").find("#globalSearch input").val("");
+            $("#cantoViewBody").find("#imagesContent").html("");
+            $("#cantoViewBody").find("#imagesContent").scrollTop(0);
             currentImageList = [];
             searchedBy = "";
             isLoadingComplete = false;
@@ -501,31 +506,31 @@ function addEventListener() {
         }
         searchedBy = "bySearch";
         isLoadingComplete = false;
-        self.find("#treeviewSection ul li").removeClass("selected");
-        self.find(".type-font").removeClass("current");
-        var initSchme = self.find(".type-font.current").data("type");
+        $("#cantoViewBody").find("#treeviewSection ul li").removeClass("selected");
+        $("#cantoViewBody").find(".type-font").removeClass("current");
+        var initSchme = $("#cantoViewBody").find(".type-font.current").data("type");
         var data = {};
         data.scheme = initSchme;
         data.keywords = value;
-        self.find("#imagesContent").html("");
-        self.find("#imagesContent").scrollTop(0);
+        $("#cantoViewBody").find("#imagesContent").html("");
+        $("#cantoViewBody").find("#imagesContent").scrollTop(0);
         currentImageList = [];
         cantoAPI.getFilterList(data, imageListDisplay);
     });
-    self.find("#cantoImageBody").on("scroll", function() {
+    $("#cantoViewBody").find("#cantoImageBody").on("scroll", function() {
         if(isScrollToPageBottom() && !isLoadingComplete){
             loadMoreAction();
         }
     });
 
-    var inputObj = self.find("#globalSearch input");
+    var inputObj = $("#cantoViewBody").find("#globalSearch input");
     $(inputObj).bind('keyup', function(event) {
         if (event.keyCode == "13") {
-            self.find('#globalSearchBtn').click();
+            $("#cantoViewBody").find('#globalSearchBtn').click();
         }
     });
 
-    var imageListSection = self.find("#cantoImageBody");
+    var imageListSection = $("#cantoViewBody").find("#cantoImageBody");
     $(imageListSection).resize(function() {
       imageResize();
     });
@@ -536,7 +541,7 @@ function getImageInit(scheme){
 }
 function imageListDisplay(imageList) {
 
-    // var scheme = self.find("#filterSection").find(".current").data("type");
+    // var scheme = $("#cantoViewBody").find("#filterSection").find(".current").data("type");
     if(!(imageList && imageList.length > 0)){
         return;
     }
@@ -565,24 +570,24 @@ function imageListDisplay(imageList) {
             //icon-s-Ok2_32
             html += '<span class="select-box icon-s-UnselectedCheck_32  "></span><span class="select-icon-background"></span>';
             html += '</div>';
-            self.find("#imagesContent").append(html);
+            $("#cantoViewBody").find("#imagesContent").append(html);
             cantoAPI.getRedirectURL(d.url.preview, d.id);
         // }
     }
-    var currentCount = self.find('.single-image').length;
+    var currentCount = $("#cantoViewBody").find('.single-image').length;
     if(currentCount == 0) {
-        self.find("#noItem").removeClass("hidden");
+        $("#cantoViewBody").find("#noItem").removeClass("hidden");
     }else{
-        self.find("#noItem").addClass("hidden");
+        $("#cantoViewBody").find("#noItem").addClass("hidden");
     }
     var rem = new Array();
-    self.find('.single-image').hover(function(){
+    $("#cantoViewBody").find('.single-image').hover(function(){
         var nameTop = $(this).height() - $(this).find(".single-image-name").height() - 20;
         $(this).find('.single-image-name').stop().animate({ top: nameTop});
     },function(){
         $(this).find('.single-image-name').stop().animate({top: '100%'});
     });
-    self.find('.single-image .select-box').off('click').on('click', function(e) {
+    $("#cantoViewBody").find('.single-image .select-box').off('click').on('click', function(e) {
         e.cancelBubble = true;
         e.stopPropagation();
         e.preventDefault();
@@ -592,7 +597,7 @@ function imageListDisplay(imageList) {
             var iMin =  Math.min(rem[rem.length-2],rem[rem.length-1]);
             var iMax =  Math.max(rem[rem.length-2],rem[rem.length-1]);
             for(i=iMin;i<=iMax;i++){
-                var selectedCount = self.find(".single-image .icon-s-Ok2_32").length;
+                var selectedCount = $("#cantoViewBody").find(".single-image .icon-s-Ok2_32").length;
                 if(selectedCount >= 20){
                     $(".max-select-tips").fadeIn( "normal").delay(2000).fadeOut(1000);
                     return;
@@ -601,7 +606,7 @@ function imageListDisplay(imageList) {
                 $(".single-image:eq("+i+")").addClass("selected");
             }
         } else {
-            var selectedCount = self.find(".single-image .icon-s-Ok2_32").length;
+            var selectedCount = $("#cantoViewBody").find(".single-image .icon-s-Ok2_32").length;
             if(selectedCount >= 20){
                 if(!$(this).hasClass("icon-s-Ok2_32")){
                     $(".max-select-tips").fadeIn( "normal").delay(2000).fadeOut(1000);
@@ -627,43 +632,43 @@ function imageListDisplay(imageList) {
     }
 }
 var handleSelectedMode = function(){
-    var selectedCount = self.find(".single-image .icon-s-Ok2_32").length;
-    self.find("#selected-count").html(selectedCount);
+    var selectedCount = $("#cantoViewBody").find(".single-image .icon-s-Ok2_32").length;
+    $("#cantoViewBody").find("#selected-count").html(selectedCount);
     if(selectedCount){
-        self.find("#globalSearch").addClass("hidden");
-        self.find("#filterSection").addClass("hidden");
-        self.find("#selectedCountSection").removeClass("hidden");
-        self.find("#selectedActionSection").removeClass("hidden");
+        $("#cantoViewBody").find("#globalSearch").addClass("hidden");
+        $("#cantoViewBody").find("#filterSection").addClass("hidden");
+        $("#cantoViewBody").find("#selectedCountSection").removeClass("hidden");
+        $("#cantoViewBody").find("#selectedActionSection").removeClass("hidden");
     } else {
-        self.find("#globalSearch").removeClass("hidden");
-        self.find("#filterSection").removeClass("hidden");
-        self.find("#selectedCountSection").addClass("hidden");
-        self.find("#selectedActionSection").addClass("hidden");
+        $("#cantoViewBody").find("#globalSearch").removeClass("hidden");
+        $("#cantoViewBody").find("#filterSection").removeClass("hidden");
+        $("#cantoViewBody").find("#selectedCountSection").addClass("hidden");
+        $("#cantoViewBody").find("#selectedActionSection").addClass("hidden");
     }
     //toggle isAllSelectedMode
-    var currentAssetsCount = self.find(".single-image").length;
+    var currentAssetsCount = $("#cantoViewBody").find(".single-image").length;
     // if(currentAssetsCount == selectedCount){
-        self.find("#selectAllBtn").addClass("all-selected");
-        self.find("#selectAllBtn").attr("title", "Deselect All");
+        $("#cantoViewBody").find("#selectAllBtn").addClass("all-selected");
+        $("#cantoViewBody").find("#selectAllBtn").attr("title", "Deselect All");
     // } else {
-    //     self.find("#selectAllBtn").removeClass("all-selected");
-    //     self.find("#selectAllBtn").attr("title", "Select All");
+    //     $("#cantoViewBody").find("#selectAllBtn").removeClass("all-selected");
+    //     $("#cantoViewBody").find("#selectAllBtn").attr("title", "Select All");
     // }
 };
 var resetImageURL = function(id, url){
-    var imgDom = self.find("#" + id);
+    var imgDom = $("#cantoViewBody").find("#" + id);
     var data = "data:image" + url;
     imgDom.attr("src", data);
 };
 
 function displayFullyImage(src) {
-    var $viewImageModal = self.find("#viewImageModal");
-    var $pageMask = self.find("#pageMask");
+    var $viewImageModal = $("#cantoViewBody").find("#viewImageModal");
+    var $pageMask = $("#cantoViewBody").find("#pageMask");
     $viewImageModal.find("img").attr("src", src);
-    self.find(".loading-icon").addClass("hidden");
+    $("#cantoViewBody").find(".loading-icon").addClass("hidden");
     $viewImageModal.removeClass("hidden");
     $pageMask.removeClass("hidden");
-    self.find('.view-image-modal .close-btn').off('click').on('click', function() {
+    $("#cantoViewBody").find('.view-image-modal .close-btn').off('click').on('click', function() {
         $viewImageModal.addClass("hidden");
         $pageMask.addClass("hidden");
     });
@@ -672,18 +677,18 @@ function displayFullyImage(src) {
 
 function imageDetail(detailData) {
     if(detailData){
-        self.find("#imageDetailModal_name").html(detailData.name);
-        self.find("#imageDetailModal_size").html(detailData.size + "KB");
-        self.find("#imageDetailModal_created").html(dateHandler(detailData.created));
-        self.find("#imageDetailModal_uploaded").html(dateHandler(detailData.lastUploaded));
-        self.find("#imageDetailModal_status").html(detailData.approvalStatus);
-        self.find("#insertIntoPostBtn").data("downloadurl", detailData.url.download);
+        $("#cantoViewBody").find("#imageDetailModal_name").html(detailData.name);
+        $("#cantoViewBody").find("#imageDetailModal_size").html(detailData.size + "KB");
+        $("#cantoViewBody").find("#imageDetailModal_created").html(dateHandler(detailData.created));
+        $("#cantoViewBody").find("#imageDetailModal_uploaded").html(dateHandler(detailData.lastUploaded));
+        $("#cantoViewBody").find("#imageDetailModal_status").html(detailData.approvalStatus);
+        $("#cantoViewBody").find("#insertIntoPostBtn").data("downloadurl", detailData.url.download);
 
 
-    var $imageDetailModal = self.find("#imageDetailModal");
-    self.find(".loading-icon").addClass("hidden");
+    var $imageDetailModal = $("#cantoViewBody").find("#imageDetailModal");
+    $("#cantoViewBody").find(".loading-icon").addClass("hidden");
     $imageDetailModal.removeClass("hidden");
-    self.find('#imageDetailModal .close-btn').off('click').on('click', function() {
+    $("#cantoViewBody").find('#imageDetailModal .close-btn').off('click').on('click', function() {
         $imageDetailModal.addClass("hidden");
     });
     }
@@ -709,38 +714,38 @@ function imageNewDetail(detailData){
         }
     };
     if(detailData){
-        self.find("#imagebox_name").html(detailData.name);
-        self.find("#imagebox_size").html(Math.round(detailData.size/1024) + "KB");
-        self.find("#imagebox_created").html(detailData.metadata ? (detailData.metadata["Create Date"] ? detailData.metadata["Create Date"] : " ") : " ");
-        self.find("#imagebox_uploaded").html(dateHandler(detailData.lastUploaded));
-        self.find("#imagebox_status").html(detailData.approvalStatus);
+        $("#cantoViewBody").find("#imagebox_name").html(detailData.name);
+        $("#cantoViewBody").find("#imagebox_size").html(Math.round(detailData.size/1024) + "KB");
+        $("#cantoViewBody").find("#imagebox_created").html(detailData.metadata ? (detailData.metadata["Create Date"] ? detailData.metadata["Create Date"] : " ") : " ");
+        $("#cantoViewBody").find("#imagebox_uploaded").html(dateHandler(detailData.lastUploaded));
+        $("#cantoViewBody").find("#imagebox_status").html(detailData.approvalStatus);
         var copyrightMoreDom = $("#imagebox_copyright").closest(".detail-item").find(".more");
-        self.find("#imagebox_copyright").html(sliceString(detailData.copyright, copyrightMoreDom, 177));
-        self.find("#imagebox_copyright").data("field",detailData.copyright);
+        $("#cantoViewBody").find("#imagebox_copyright").html(sliceString(detailData.copyright, copyrightMoreDom, 177));
+        $("#cantoViewBody").find("#imagebox_copyright").data("field",detailData.copyright);
         var tactMoreDom = $("#imagebox_tac").closest(".detail-item").find(".more");
-        self.find("#imagebox_tac").html(sliceString(detailData.termsAndConditions, tactMoreDom, 160));
-        self.find("#imagebox_tac").data("field",detailData.termsAndConditions);
-        self.find("#insertBtn").data("id", detailData.id);
-        self.find("#insertBtn").data("scheme", detailData.scheme);
+        $("#cantoViewBody").find("#imagebox_tac").html(sliceString(detailData.termsAndConditions, tactMoreDom, 160));
+        $("#cantoViewBody").find("#imagebox_tac").data("field",detailData.termsAndConditions);
+        $("#cantoViewBody").find("#insertBtn").data("id", detailData.id);
+        $("#cantoViewBody").find("#insertBtn").data("scheme", detailData.scheme);
     }
 
-    var $imageDetailModal = self.find("#imagePreviewModal");
-    self.find(".loading-icon").addClass("hidden");
+    var $imageDetailModal = $("#cantoViewBody").find("#imagePreviewModal");
+    $("#cantoViewBody").find(".loading-icon").addClass("hidden");
     $imageDetailModal.removeClass("hidden");
-    self.find('#imagePreviewModal .close-btn').off('click').on('click', function() {
+    $("#cantoViewBody").find('#imagePreviewModal .close-btn').off('click').on('click', function() {
         $imageDetailModal.addClass("hidden");
     });
-    self.find('#imagePreviewModal #cancelBtn').off('click').on('click', function() {
+    $("#cantoViewBody").find('#imagePreviewModal #cancelBtn').off('click').on('click', function() {
         $imageDetailModal.addClass("hidden");
     });
-    self.find('#imagePreviewModal .detail-item .more').off('click').on('click', function() {
+    $("#cantoViewBody").find('#imagePreviewModal .detail-item .more').off('click').on('click', function() {
         var text = $(this).closest(".detail-item").find(".content").data("field");
         $(this).closest(".detail-item").find(".content").html(text);
         $(this).addClass("hidden");
     });
-    self.find('#imagePreviewModal #insertBtn').off('click').on('click', function() {
-        // var downloaderURL = self.find('#imagePreviewModal #insertBtn').data("downloadurl");
-        self.find(".loading-icon").removeClass("hidden");
+    $("#cantoViewBody").find('#imagePreviewModal #insertBtn').off('click').on('click', function() {
+        // var downloaderURL = $("#cantoViewBody").find('#imagePreviewModal #insertBtn').data("downloadurl");
+        $("#cantoViewBody").find(".loading-icon").removeClass("hidden");
         var assetArray = [];
         var obj = {};
         obj.id = detailData.id;
@@ -762,12 +767,12 @@ function treeviewDataHandler() {
 }
 
 var treeviewController= function(dummyData) {
-    var self = $(cantoViewDom);
+    // var $("#cantoViewBody") = $(cantoViewDom);
     // console.log(dummyData);
     var html = "";
     html = treeviewFirstRender(dummyData);
-    self.find("#treeviewContent").append(html);
-    self.find("#treeviewContent > ul").animate({
+    $("#cantoViewBody").find("#treeviewContent").append(html);
+    $("#cantoViewBody").find("#treeviewContent > ul").animate({
         height:'toggle'
     });
 
@@ -796,13 +801,13 @@ var treeviewFirstRender = function(data){
 };
 var subTreeRender  = function(data){
     var html = treeviewRender(data);
-    self.find(".current-tree-node").append(html);
-    self.find(".current-tree-node > ul").animate({
+    $("#cantoViewBody").find(".current-tree-node").append(html);
+    $("#cantoViewBody").find(".current-tree-node > ul").animate({
         height:'toggle'
     });
-    self.find(".current-tree-node").find(".folder-loading").addClass("hidden");
-    self.find(".current-tree-node").find(".icon-s-Folder_open-20px").removeClass("hidden");
-    self.find(".current-tree-node").removeClass("current-tree-node");
+    $("#cantoViewBody").find(".current-tree-node").find(".folder-loading").addClass("hidden");
+    $("#cantoViewBody").find(".current-tree-node").find(".icon-s-Folder_open-20px").removeClass("hidden");
+    $("#cantoViewBody").find(".current-tree-node").removeClass("current-tree-node");
 };
 var treeviewRender = function(data){
     var html = "<ul style='display: none;'>";
@@ -829,7 +834,7 @@ var treeviewRender = function(data){
 
 function imageResize(){
     var initCount = 8;
-    var totalWidth = totalWidth = Number(self.find("#imagesContent")[0].offsetWidth);
+    var totalWidth = totalWidth = Number($("#cantoViewBody").find("#imagesContent")[0].offsetWidth);
     var singleImageWidth = 0;
     var getCountInALine = function(n){
         singleImageWidth = Number((totalWidth - 8)/n - 2);
@@ -844,7 +849,7 @@ function imageResize(){
         }
     };
     var singleWidth = getCountInALine(initCount);
-    self.find('.single-image').css("width",singleWidth);
+    $("#cantoViewBody").find('.single-image').css("width",singleWidth);
 };
 
 //scroll to load more
@@ -865,27 +870,27 @@ function loadMoreHandler(){
     if(imageCount !== 0){
         $("#loadingMore").fadeIn( "slow");
     } else {
-        self.find("#imagesContent").html("");
+        $("#cantoViewBody").find("#imagesContent").html("");
     }
     return filterString;
 }
 
 function loadMoreAction(){
     if(searchedBy == "bySearch"){
-        var value = self.find("#globalSearch input").val();
+        var value = $("#cantoViewBody").find("#globalSearch input").val();
         if(!value){
             return;
         }
-        var initSchme = self.find(".type-font.current").data("type");
+        var initSchme = $("#cantoViewBody").find(".type-font.current").data("type");
         var data = {};
         data.scheme = initSchme;
         data.keywords = value;
         cantoAPI.getFilterList(data, imageListDisplay);
     }else if(searchedBy == "bytree"){
-        var albumId = self.find("#treeviewSection ul li").find(".selected").data("id");
+        var albumId = $("#cantoViewBody").find("#treeviewSection ul li").find(".selected").data("id");
         cantoAPI.getListByAlbum(albumId, imageListDisplay);
     }else{
-        var initSchme = self.find(".type-font.current").data("type");
+        var initSchme = $("#cantoViewBody").find(".type-font.current").data("type");
         getImageInit(initSchme);
     }
 }

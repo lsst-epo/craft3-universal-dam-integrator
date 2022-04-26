@@ -64,6 +64,13 @@ function replaceCantoTagByImage(id, assetArray){
                 // insertImageToCantoTag(cantoURL);
                 callback(currentCantoTagID, data.assetList);
 
+            } else if(data && data.type == "closeModal"){
+                $("#fields-dam-preview-image").remove(); 
+                $("#fields-rosas-clicker").html("Choose a Different DAM Asset");
+                $("#fields-dam-asset-preview").prepend(`<img id="fields-dam-preview-image" style="max-height:200px; max-width:200px;" src=${data.thumbnailUrl}/>`);
+                $("#fields-dam-asset-preview").show();
+                $modal.hide();
+
             } else if(data){
                 verifyCode = data;
                 // var cantoContentPage = "https://s3-us-west-2.amazonaws.com/static.dmc/universal/cantoContent.html";
@@ -134,9 +141,6 @@ function replaceCantoTagByImage(id, assetArray){
     }
     function getTokenByVerifycode(verifyCode) {
         // timeStamp = new Date().getTime();
-        console.log("timestamp : " + timeStamp);
-        console.log(verifyCode);
-        console.log("appId : " + appId);
         $.ajax({type:"POST",
             url: "https://oauth.canto.com/oauth/api/oauth2/universal2/token", 
             dataType:"json", 
@@ -153,8 +157,6 @@ function replaceCantoTagByImage(id, assetArray){
                 
             },
             error: function(request) {
-                console.log("am errnro");
-                console.log(request);
                 alert("Get token errorz");
             }
         });
@@ -164,7 +166,6 @@ function replaceCantoTagByImage(id, assetArray){
             url: "https://oauth." + env + ":443/oauth/api/oauth2/tenant/" + tokenInfo.refreshToken, 
             success:function(data){
                 tokenInfo.tenant = data;
-                console.log("inside getTenant().success()");
                 var cantoContentPage = "./cantoAssets/cantoContent.html"; //universal-dam-integrator
                 $("#cantoUCFrame").attr("src", "/admin/universal-dam-integrator/cantoContent.html");
             },
