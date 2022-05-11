@@ -3,7 +3,7 @@
 namespace rosas\dam\fields;
 
 use Craft;
-use craft\base\field;
+use craft\base\Field;
 use craft\base\ElementInterface;
 use craft\helpers\Json;
 use rosas\dam\controllers\AssetSyncController;
