@@ -35,7 +35,7 @@ class DAMAsset extends Field {
         // Get our id and namespace
         $id = Craft::$app->getView()->formatInputId($this->handle);
         $namespacedId = Craft::$app->getView()->namespaceInputId($id);
-        $metadata = $this->getAssetMetadataByAssetId(intval($element->damAsset));
+        $metadata = [];
 
         // Render the input template
         $templateVals =             [
@@ -46,11 +46,14 @@ class DAMAsset extends Field {
             'id' => $id,
             'namespacedId' => $namespacedId,
         ];
+
+        if(array_key_exists("damAsset", $element) && $element->damAsset != null) {
+            $metadata = $this->getAssetMetadataByAssetId(intval($element->damAsset));
+            $templateVals['assetId'] = $element->damAsset;
+        }
+
         if(array_key_exists("thumbnailUrl", $metadata)) {
             $templateVals['thumbnailUrl'] = $metadata["thumbnailUrl"];
-        }
-        if($element->damAsset != null) {
-            $templateVals['assetId'] = $element->damAsset;
         }
 
         return Craft::$app->getView()->renderTemplate($this->inputTemplate, $templateVals);
