@@ -4,7 +4,7 @@ namespace rosas\dam\gql\resolvers;
 
 use Craft;
 // use craft\gql\base\ElementResolver;
-use craft\gql\resolves\elements\Asset as AssetResolver;
+use craft\gql\resolvers\elements\Asset as AssetResolver;
 use rosas\dam\elements\Asset as AssetElement;
 use rosas\dam\elements\db\DAMAssetQuery;
 use GraphQL\Type\Definition\ResolveInfo;
