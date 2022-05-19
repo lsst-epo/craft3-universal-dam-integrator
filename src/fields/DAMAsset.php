@@ -8,6 +8,12 @@ use craft\base\ElementInterface;
 use craft\helpers\Json;
 use rosas\dam\controllers\AssetSyncController;
 use rosas\dam\db\AssetMetadata;
+use craft\gql\arguments\elements\Asset as AssetArguments;
+use craft\gql\interfaces\elements\Asset as AssetInterface;
+use craft\gql\resolvers\elements\Asset as AssetResolver;
+use craft\helpers\Gql as GqlHelper;
+use craft\services\Gql as GqlService;
+use GraphQL\Type\Definition\Type;
 
 class DAMAsset extends Field {
 
@@ -30,6 +36,16 @@ class DAMAsset extends Field {
         parent::__construct($config);
     }
     
+    // Pulled from \craft\fields\Assets
+    public function getContentGqlType() {
+        return [
+            'name' => $this->handle,
+            'type' => Type::nonNull(Type::listOf(AssetInterface::getType())),
+            'args' => AssetArguments::getArguments(),
+            'resolve' => AssetResolver::class . '::resolve',
+            'complexity' => GqlHelper::relatedArgumentComplexity(GqlService::GRAPHQL_COMPLEXITY_EAGER_LOAD),
+        ];
+    }
     
     public function getInputHtml($value, ElementInterface $element = null): string {
         // Get our id and namespace
