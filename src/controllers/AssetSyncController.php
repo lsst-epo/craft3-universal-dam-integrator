@@ -12,6 +12,7 @@ use rosas\dam\services\Assets;
 use rosas\dam\db\AssetMetadata;
 use rosas\dam\models\Constants;
 use rosas\dam\fields\DAMAsset;
+use craft\helpers\ElementHelper;
 
 class AssetSyncController extends Controller {
 
@@ -86,31 +87,44 @@ class AssetSyncController extends Controller {
         $assetsService = new Assets();
         $res = $assetsService->saveDamAsset($damId);
 
-        $damFieldService = new DAMAsset();
-
-        $assetId = $this->_getAssetIdByDamId($damId)[0];
-        $metadata = $damFieldService->getAssetMetadataByAssetId($assetId);
-        if(count($metadata) > 0) {
+        $assetQueryRes = $this->_getAssetIdByDamId($damId);
+        if(count($assetQueryRes) > 0) {
             $db = Craft::$app->getDb();
 
-            // Update the damAsset field with the newly uploaded asset
-            $test = $db->createCommand()
-            ->update('{{content}}',  [
-                '"field_damAsset_cqvmuaql"' => $metadata["assetId"]
-            ],
-            '"elementId" = :elementId',
-            [
-                ":elementId" => intval($elementId)
-            ])
-            ->execute();
+            $assetId = $assetQueryRes[0];
+            $damFieldService = new DAMAsset();
+            $metadata = $damFieldService->getAssetMetadataByAssetId($assetId);
+            // Craft appends a random guid to the end of custom fields, this makes
+            // getting the correct column name tricky, hence this query to first retrieve the column name
+            $field = Craft::$app->fields->getFieldByHandle("damAsset");
+            $col_name = ElementHelper::fieldColumnFromField($field);
 
+            if(count($metadata) > 0) {
+                // Update the damAsset field with the newly uploaded asset
+                $test = $db->createCommand()
+                ->update('{{content}}',  [
+                    $col_name => $metadata["assetId"]
+                ],
+                '"elementId" = :elementId',
+                [
+                    ":elementId" => intval($elementId)
+                ])
+                ->execute();
+    
+            }
+    
+            return Json::encode([
+                "canto_id_from_ui" => $damId,
+                "field_id_from_ui" => $fieldId,
+                "element_id_from_ui" => $elementId,
+                "asset_thumbnail" => $metadata["thumbnailUrl"]
+            ]);
         }
-
         return Json::encode([
-            "canto_id_from_ui" => $damId,
-            "field_id_from_ui" => $fieldId,
-            "element_id_from_ui" => $elementId,
-            "asset_thumbnail" => $metadata["thumbnailUrl"]
+            "canto_id_from_ui" => null,
+            "field_id_from_ui" => null,
+            "element_id_from_ui" => null,
+            "asset_thumbnail" => null
         ]);
     }
 
