@@ -265,7 +265,8 @@ cantoAPI.insertImage = function(imageArray){
                 data: JSON.stringify({
                     cantoId: resp[0].id,
                     fieldId: window.frameElement.getAttribute("data-field"),
-                    elementId: window.frameElement.getAttribute("data-element")
+                    elementId: window.frameElement.getAttribute("data-element"),
+                    entryType: window.frameElement.getAttribute("data-type")
                 }),
                 error: function(req) {
                     console.log("some crazy error happened?!!?");

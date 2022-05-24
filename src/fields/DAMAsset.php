@@ -15,6 +15,7 @@ use rosas\dam\gql\resolvers\DAMAssetResolver as AssetResolver;
 use craft\helpers\Gql as GqlHelper;
 use craft\services\Gql as GqlService;
 use GraphQL\Type\Definition\Type;
+use craft\services\Sections;
 
 class DAMAsset extends Field {
 
@@ -54,12 +55,22 @@ class DAMAsset extends Field {
         $namespacedId = Craft::$app->getView()->namespaceInputId($id);
         $metadata = [];
 
+        $serviceHelper = new Sections();
+        $entryTypes = $serviceHelper->getEntryTypesBySectionId($element->sectionId);
+
+        for($i = 0; i < count($entryTypes); $i++) {
+            if($entryTypes[$i]->id == $element->typeId) {
+                $entryType = $entryTypes[$i]->handle;
+            }
+        }
+
         // Render the input template
         $templateVals =             [
             'name' => $this->handle,
             'value' => $value,
             'fieldId' => $this->id,
             'elementId' => $element->id,
+            'entryType' => $entryType,
             'id' => $id,
             'namespacedId' => $namespacedId,
         ];

@@ -83,9 +83,10 @@ class AssetSyncController extends Controller {
         $damId = $this->request->getBodyParam('cantoId');
         $fieldId = $this->request->getBodyParam('fieldId');
         $elementId = $this->request->getBodyParam('elementId');
+        $entryType = $this->request->getBodyParam('type');
 
         $assetsService = new Assets();
-        $res = $assetsService->saveDamAsset($damId);
+        $res = $assetsService->saveDamAsset($damId, $elementId, $entryType);
 
         $assetQueryRes = $this->_getAssetIdByDamId($damId);
         if(count($assetQueryRes) > 0) {

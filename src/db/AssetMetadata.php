@@ -17,7 +17,7 @@ class AssetMetadata extends ActiveRecord{
         return "{{universaldamintegrator_asset_metadata}}";
     }
 
-    public static function upsert($id, $assetMetadata) {
+    public static function upsert($id, $assetMetadata, $elementId, $entryType) {
         $db = Craft::$app->getDb();
         foreach(\rosas\dam\models\Constants::ASSET_METADATA_FIELDS as $key => $value) {
             $metaVal = "";
@@ -60,6 +60,24 @@ class AssetMetadata extends ActiveRecord{
 
 
         }
+
+        // Temp code
+        $db->createCommand()
+        ->insert('{{%universaldamintegrator_asset_metadata}}',  [
+            'assetId' => $id,
+            'dam_meta_key' => "associated_element_id",
+            'dam_meta_value' => $elementId
+        ])
+        ->execute();
+
+        $db->createCommand()
+        ->insert('{{%universaldamintegrator_asset_metadata}}',  [
+            'assetId' => $id,
+            'dam_meta_key' => "entry_type_handle",
+            'dam_meta_value' => $entryType
+        ])
+        ->execute();
+        // End of temp code
     }
 
 }

@@ -84,10 +84,8 @@ class Elements extends ElementsService {
      * @throws Exception if the $element doesn’t have any supported sites
      * @throws \Throwable if reasons
      */
-    public function saveElement(ElementInterface $element, bool $runValidation = true, bool $propagate = true, bool $updateSearchIndex = null, $assetMetadata = null): bool
+    public function saveElement(ElementInterface $element, bool $runValidation = true, bool $propagate = true, bool $updateSearchIndex = null, $assetMetadata = null, $elementId, $entryType): bool
     {
-        Craft::info("maddie - inside saveElement()", "rosas");
-        Craft::info("maddie - height : " . $element->getHeight() . ", width : " . $element->getWidth(), "rosas");
         // Force propagation for new elements
         $propagate = !$element->id || $propagate;
 
@@ -95,7 +93,7 @@ class Elements extends ElementsService {
         $duplicateOf = $element->duplicateOf;
         $element->duplicateOf = null;
 
-        $success = $this->_saveElementInternal($element, $runValidation, $propagate, $updateSearchIndex, $assetMetadata);
+        $success = $this->_saveElementInternal($element, $runValidation, $propagate, $updateSearchIndex, $assetMetadata. $elementId, $entryType);
 
         $element->duplicateOf = $duplicateOf;
         return $success;
@@ -114,7 +112,7 @@ class Elements extends ElementsService {
      * @throws UnsupportedSiteException if the element is being saved for a site it doesn’t support
      * @throws \Throwable if reasons
      */
-    private function _saveElementInternal(ElementInterface $element, bool $runValidation = true, bool $propagate = true, bool $updateSearchIndex = null, $assetMetadata = null): bool
+    private function _saveElementInternal(ElementInterface $element, bool $runValidation = true, bool $propagate = true, bool $updateSearchIndex = null, $assetMetadata = null, $elementId, $entryType): bool
     {
         /** @var ElementInterface|DraftBehavior|RevisionBehavior $element */
         $isNewElement = !$element->id;
@@ -493,7 +491,7 @@ class Elements extends ElementsService {
         $element->propagateAll = $originalPropagateAll;
 
         // Add metadata to the DAM plugin metadata table
-        AssetMetadata::upsert($element->id, $assetMetadata);
+        AssetMetadata::upsert($element->id, $assetMetadata, $elementId, $entryType);
 
         return true;
     }
