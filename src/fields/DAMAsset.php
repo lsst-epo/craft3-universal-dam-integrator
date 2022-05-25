@@ -3,21 +3,23 @@
 namespace rosas\dam\fields;
 
 use Craft;
-use craft\base\Field;
+// use craft\base\Field;
+use craft\fields\Assets as AssetField;
 use craft\base\ElementInterface;
 use craft\helpers\Json;
 use rosas\dam\controllers\AssetSyncController;
 use rosas\dam\db\AssetMetadata;
 use craft\gql\arguments\elements\Asset as AssetArguments;
-use craft\gql\interfaces\elements\Asset as AssetInterface;
-// use craft\gql\resolvers\elements\Asset as AssetResolver;
+//use craft\gql\interfaces\elements\Asset as AssetInterface;
+use rosas\dam\gql\interfaces\DAMAssetInterface as AssetInterface;
+//use craft\gql\resolvers\elements\Asset as AssetResolver;
 use rosas\dam\gql\resolvers\DAMAssetResolver as AssetResolver;
 use craft\helpers\Gql as GqlHelper;
 use craft\services\Gql as GqlService;
 use GraphQL\Type\Definition\Type;
 use craft\services\Sections;
 
-class DAMAsset extends Field {
+class DAMAsset extends AssetField {
 
      /**
      * @inheritdoc
