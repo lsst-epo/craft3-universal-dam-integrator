@@ -82,8 +82,6 @@ class AssetSyncController extends Controller {
         Craft::info("DAM Asset upload triggered!", "UDAMI");
         $damId = $this->request->getBodyParam('cantoId');
         $fieldId = $this->request->getBodyParam('fieldId');
-        // $elementId = $this->request->getBodyParam('elementId');
-        // $entryType = $this->request->getBodyParam('type');
 
         $assetsService = new Assets();
         $res = $assetsService->saveDamAsset($damId);
