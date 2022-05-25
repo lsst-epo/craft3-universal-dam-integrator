@@ -58,26 +58,8 @@ class AssetMetadata extends ActiveRecord{
                     ->execute();
             }
 
-
         }
 
-        // Temp code
-        $db->createCommand()
-        ->insert('{{%universaldamintegrator_asset_metadata}}',  [
-            'assetId' => $id,
-            'dam_meta_key' => "associated_element_id",
-            'dam_meta_value' => $elementId
-        ])
-        ->execute();
-
-        $db->createCommand()
-        ->insert('{{%universaldamintegrator_asset_metadata}}',  [
-            'assetId' => $id,
-            'dam_meta_key' => "entry_type_handle",
-            'dam_meta_value' => $entryType
-        ])
-        ->execute();
-        // End of temp code
     }
 
 }

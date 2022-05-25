@@ -43,7 +43,7 @@ class Assets extends Component
         return $vols;
     }
 
-    public function saveDamAsset($damId, $elementId, $entryType) {
+    public function saveDamAsset($damId) {
         // Ensure settings are saved before attempting any requests
         if(isset(\rosas\dam\Plugin::getInstance()->getSettings()->retrieveAssetMetadataEndpoint) &&
            isset(\rosas\dam\Plugin::getInstance()->getSettings()->authEndpoint) &&
@@ -62,7 +62,7 @@ class Assets extends Component
                             ]
                         ];
                     } else {
-                        return $this->saveAssetMetadata($elementId, $entryType);
+                        return $this->saveAssetMetadata();
                     }
                 }
             } catch (\Exception $e) {
@@ -170,7 +170,7 @@ class Assets extends Component
         $elements = new Elements();
         Craft::info("About to save element", "UDAMI");
 
-        $success = $elements->saveElement($newAsset, false, true, true, $this->assetMetadata, $elementId, $entryType);
+        $success = $elements->saveElement($newAsset, false, true, true, $this->assetMetadata);
 
         if($success) {
             return [
