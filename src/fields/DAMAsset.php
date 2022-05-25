@@ -3,13 +3,23 @@
 namespace rosas\dam\fields;
 
 use Craft;
-use craft\base\Field;
+// use craft\base\Field;
+use craft\fields\Assets as AssetField;
 use craft\base\ElementInterface;
 use craft\helpers\Json;
 use rosas\dam\controllers\AssetSyncController;
 use rosas\dam\db\AssetMetadata;
+use craft\gql\arguments\elements\Asset as AssetArguments;
+//use craft\gql\interfaces\elements\Asset as AssetInterface;
+use rosas\dam\gql\interfaces\DAMAssetInterface as AssetInterface;
+//use craft\gql\resolvers\elements\Asset as AssetResolver;
+use rosas\dam\gql\resolvers\DAMAssetResolver as AssetResolver;
+use craft\helpers\Gql as GqlHelper;
+use craft\services\Gql as GqlService;
+use GraphQL\Type\Definition\Type;
+use craft\services\Sections;
 
-class DAMAsset extends Field {
+class DAMAsset extends AssetField {
 
      /**
      * @inheritdoc
@@ -30,6 +40,16 @@ class DAMAsset extends Field {
         parent::__construct($config);
     }
     
+    // Pulled from \craft\fields\Assets
+    public function getContentGqlType() {
+        return [
+            'name' => $this->handle,
+            'type' => Type::nonNull(Type::listOf(AssetInterface::getType())),
+            'args' => AssetArguments::getArguments(),
+            'resolve' => AssetResolver::class . '::resolve',
+            'complexity' => GqlHelper::relatedArgumentComplexity(GqlService::GRAPHQL_COMPLEXITY_EAGER_LOAD),
+        ];
+    }
     
     public function getInputHtml($value, ElementInterface $element = null): string {
         // Get our id and namespace

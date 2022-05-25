@@ -54,7 +54,8 @@ $("#fields-rosas-clicker").click(function(e) {
     $modal.show();
     let fieldId = e.target.dataset.field;
     let elementId = e.target.dataset.element;
-    loadIframeContent(fieldId, elementId);
+    let type = e.target.dataset.type;
+    loadIframeContent(fieldId, elementId, type);
 });
 
 function dynamicLoadCss(url) {
@@ -194,7 +195,7 @@ function addEventListener() {
     }
 
 /*--------------------------load iframe content---------------------------------------*/
-function loadIframeContent(fieldId, elementId) {
+function loadIframeContent(fieldId, elementId, type) {
     timeStamp = new Date().getTime();
     let tokenInfo = {};
     let cantoLoginPage = "https://oauth.canto.com/oauth/api/oauth2/universal2/authorize?response_type=code&app_id=" + "52ff8ed9d6874d48a3bef9621bc1af26" + "&redirect_uri=http://localhost:8080&state=abcd" + "&code_challenge=" + "1649285048042" + "&code_challenge_method=plain";
@@ -206,6 +207,7 @@ function loadIframeContent(fieldId, elementId) {
     } else {
         $("#cantoUCFrame").attr("data-element", elementId);
         $("#cantoUCFrame").attr("data-field", fieldId);
+        $("#cantoUCFrame").attr("data-type", type);
         $("#cantoUCFrame").attr("src", cantoLoginPage);
     }
 }

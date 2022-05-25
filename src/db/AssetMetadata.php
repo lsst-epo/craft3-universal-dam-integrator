@@ -58,8 +58,8 @@ class AssetMetadata extends ActiveRecord{
                     ->execute();
             }
 
-
         }
+
     }
 
 }
