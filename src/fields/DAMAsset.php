@@ -60,7 +60,7 @@ class DAMAsset extends AssetField {
         $serviceHelper = new Sections();
         $entryTypes = $serviceHelper->getEntryTypesBySectionId($element->sectionId);
 
-        for($i = 0; i < count($entryTypes); $i++) {
+        for($i = 0; $i < count($entryTypes); $i++) {
             if($entryTypes[$i]->id == $element->typeId) {
                 $entryType = $entryTypes[$i]->handle;
             }
