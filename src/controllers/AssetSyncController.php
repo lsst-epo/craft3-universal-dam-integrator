@@ -52,9 +52,12 @@ class AssetSyncController extends Controller {
         // Update the damAsset field with the newly uploaded asset
         $db = Craft::$app->getDb();
         try {
+            $field = Craft::$app->fields->getFieldByHandle("damAsset");
+            $col_name = ElementHelper::fieldColumnFromField($field);
+
             $db->createCommand()
             ->update('{{content}}',  [
-                '"field_damAsset_cqvmuaql"' => null
+                $col_name => null
             ],
             '"elementId" = :elementId',
             [
