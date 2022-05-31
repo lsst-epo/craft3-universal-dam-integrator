@@ -79,4 +79,5 @@ class DAMAssetGenerator implements GeneratorInterface
         ]));
 
     }
+
 }
