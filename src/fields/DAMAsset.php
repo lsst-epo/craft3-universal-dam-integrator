@@ -18,6 +18,10 @@ use craft\helpers\Gql as GqlHelper;
 use craft\services\Gql as GqlService;
 use GraphQL\Type\Definition\Type;
 use craft\services\Sections;
+use craft\db\Query;
+use craft\db\Table;
+use craft\helpers\ElementHelper;
+use craft\helpers\Db;
 
 class DAMAsset extends AssetField {
 
@@ -38,6 +42,14 @@ class DAMAsset extends AssetField {
 
     public function __construct(array $config = []) {
         parent::__construct($config);
+    }
+
+    public static function displayName(): string {
+        return Craft::t('app', 'DAMAsset');
+    }
+
+    public static function hasContentColumn(): bool {
+        return true; // Extended class sets this to false
     }
     
     // Pulled from \craft\fields\Assets
@@ -68,8 +80,15 @@ class DAMAsset extends AssetField {
         ];
 
         if(array_key_exists("damAsset", $element) && $element->damAsset != null) {
-            $metadata = $this->getAssetMetadataByAssetId(intval($element->damAsset));
-            $templateVals['assetId'] = $element->damAsset;
+            $assetId = $this->_getDamAssetId($element->id);
+
+            if($assetId != null) {
+                $metadata = $this->getAssetMetadataByAssetId($assetId);
+
+                if($metadata != null && count($metadata) > 0) {
+                    $templateVals['assetId'] = $assetId;
+                }
+            }
         }
 
         if(array_key_exists("thumbnailUrl", $metadata)) {
@@ -77,6 +96,20 @@ class DAMAsset extends AssetField {
         }
 
         return Craft::$app->getView()->renderTemplate($this->inputTemplate, $templateVals);
+    }
+
+    public static function _getDamAssetId($elementId) {
+        // $db = Craft::$app->getDb();
+        $field = Craft::$app->fields->getFieldByHandle("damAsset");
+        $col_name = ElementHelper::fieldColumnFromField($field);
+
+        $damAssetId = (new Query())
+                ->select([$col_name])
+                ->from([Table::CONTENT])
+                ->where(Db::parseParam('elementId', $elementId))
+                ->column();
+
+        return $damAssetId;
     }
 
     public static function getAssetMetadataByAssetId($assetId) {
