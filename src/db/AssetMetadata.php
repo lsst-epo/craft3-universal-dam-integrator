@@ -17,13 +17,8 @@ class AssetMetadata extends ActiveRecord{
         return "{{universaldamintegrator_asset_metadata}}";
     }
 
-    /**
-     * Here, the $elementId is the ID of the entry that the DAM asset was uploaded to
-     */
     public static function upsert($id, $assetMetadata) {
         $db = Craft::$app->getDb();
-
-        // Insert the content metadata
         foreach(\rosas\dam\models\Constants::ASSET_METADATA_FIELDS as $key => $value) {
             $metaVal = "";
             if(array_key_exists($value[0], $assetMetadata)) {
@@ -63,9 +58,9 @@ class AssetMetadata extends ActiveRecord{
                     ->execute();
             }
 
-        }
+	}
 
-        // Lastly, insert the backend organization metadata
+	// Lastly, insert the backend organization metadata
         foreach($assetMetadata["epo_etc"] as $key => $value) {
             $db->createCommand()
             ->insert('{{%universaldamintegrator_asset_metadata}}',  [
@@ -75,7 +70,6 @@ class AssetMetadata extends ActiveRecord{
             ])
             ->execute();
         }
-
 
     }
 
