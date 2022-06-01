@@ -52,6 +52,13 @@ class AssetSyncController extends Controller {
         // Update the damAsset field with the newly uploaded asset
         $db = Craft::$app->getDb();
         try {
+            // First, get assetId from the elementId
+            $damFieldService = new DAMAsset();
+            $assetId = $damFieldService->getDamAssetId(intval($elementId));
+
+            // Then, delete the element, asset, and metadata records
+            $this->actionAssetDeleteWebhook($assetId);
+
             $field = Craft::$app->fields->getFieldByHandle("damAsset");
             $col_name = ElementHelper::fieldColumnFromField($field);
 
@@ -90,12 +97,14 @@ class AssetSyncController extends Controller {
         $assetsService = new Assets();
         $res = $assetsService->saveDamAsset($damId);
 
-        $assetQueryRes = $this->_getAssetIdByDamId($damId);
-        if(count($assetQueryRes) > 0) {
+        // $assetQueryRes = $this->_getAssetIdByDamId($damId);
+        // $damFieldService = new DAMAsset();
+        // $assetId = $damFieldService->getDamAssetId(intval($elementId));
+        if($assetId != null) {
             $db = Craft::$app->getDb();
 
-            $assetId = $assetQueryRes[0];
-            $damFieldService = new DAMAsset();
+            // $assetId = $assetQueryRes[0];
+            //$damFieldService = new DAMAsset();
             $metadata = $damFieldService->getAssetMetadataByAssetId($assetId);
             // Craft appends a random guid to the end of custom fields, this makes
             // getting the correct column name tricky, hence this query to first retrieve the column name
@@ -145,10 +154,10 @@ class AssetSyncController extends Controller {
     /**
      * DELETE webhook controller
      */
-    public function actionAssetDeleteWebhook() {
+    public function actionAssetDeleteWebhook($assetId = null) {
         Craft::info("'Delete' webhook triggered!", "Universal DAM Integrator");
         $damId = $this->request->getBodyParam('id');
-        $ids = $this->_getAssetIdByDamId($damId);
+        $ids = ($assetId == null) ? $this->_getAssetIdByDamId($damId) : [$assetId];
 
         foreach($ids as $id) {
             // Deleting the element record cascades to the assets record which cascades to the assetMetadata record

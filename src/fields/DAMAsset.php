@@ -80,7 +80,7 @@ class DAMAsset extends AssetField {
         ];
 
         if(array_key_exists("damAsset", $element) && $element->damAsset != null) {
-            $assetId = $this->_getDamAssetId($element->id);
+            $assetId = $this->getDamAssetId($element->id);
 
             if($assetId != null) {
                 $metadata = $this->getAssetMetadataByAssetId($assetId);
@@ -98,7 +98,7 @@ class DAMAsset extends AssetField {
         return Craft::$app->getView()->renderTemplate($this->inputTemplate, $templateVals);
     }
 
-    public static function _getDamAssetId($elementId) {
+    public static function getDamAssetId($elementId) {
         // $db = Craft::$app->getDb();
         $field = Craft::$app->fields->getFieldByHandle("damAsset");
         $col_name = ElementHelper::fieldColumnFromField($field);
