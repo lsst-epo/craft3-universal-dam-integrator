@@ -48,16 +48,18 @@ class AssetSyncController extends Controller {
     public function actionDamAssetRemoval() {
         Craft::info("DAM Asset upload removal triggered!", "UDAMI");
         $elementId = $this->request->getBodyParam('elementId');
+        $fieldId = $this->request->getBodyParam('fieldId');
 
         // Update the damAsset field with the newly uploaded asset
         $db = Craft::$app->getDb();
         try {
             // First, get assetId from the elementId
-            $damFieldService = new DAMAsset();
-            $assetId = $damFieldService->getDamAssetId(intval($elementId));
+            // $damFieldService = new DAMAsset();
+            // $assetId = $damFieldService->getDamAssetId(intval($elementId));
+            $assetId = $this->_getAssetIdByElementId($elementId, $fieldId);
 
             // Then, delete the element, asset, and metadata records
-            $this->actionAssetDeleteWebhook($assetId);
+            $this->actionAssetDeleteWebhook($assetId, $elementId, $fieldId);
 
             $field = Craft::$app->fields->getFieldByHandle("damAsset");
             $col_name = ElementHelper::fieldColumnFromField($field);
@@ -95,16 +97,20 @@ class AssetSyncController extends Controller {
         $elementId = $this->request->getBodyParam('elementId');
 
         $assetsService = new Assets();
-        $res = $assetsService->saveDamAsset($damId);
+        $res = $assetsService->saveDamAsset($damId, $elementId, $fieldId);
 
         // $assetQueryRes = $this->_getAssetIdByDamId($damId);
         // $damFieldService = new DAMAsset();
         // $assetId = $damFieldService->getDamAssetId(intval($elementId));
+        $assetId = $this->_getAssetIdByElementId($elementId, $fieldId);
+        Craft::info("about to log assetId after calling getAssetIdByElementId", "schneez");
+        Craft::info($assetId, "schneez");
+
         if($assetId != null) {
             $db = Craft::$app->getDb();
 
             // $assetId = $assetQueryRes[0];
-            //$damFieldService = new DAMAsset();
+            $damFieldService = new DAMAsset();
             $metadata = $damFieldService->getAssetMetadataByAssetId($assetId);
             // Craft appends a random guid to the end of custom fields, this makes
             // getting the correct column name tricky, hence this query to first retrieve the column name
@@ -194,10 +200,36 @@ class AssetSyncController extends Controller {
         }
     }
 
+    private static function _getAssetIdByElementId($elementId, $fieldId = null) {
+        $assetId = null;
+        $elementRows = AssetMetadata::find()
+            ->where(['dam_meta_value' => $elementId, 'dam_meta_key' => 'elementId'])
+            ->all();
+
+        if(count($elementRows) > 1) { // multiple DAM assets are associated with this entry, so perform another query based on fieldId if it is not null
+            $assetIds = [];
+            foreach($elementRows as $row) {
+                array_push($assetIds, $row["assetId"]);
+            }
+
+            // Now perform another query that narrows down the search based on field ID
+            $assetIdRow = AssetMetadata::find()
+                ->where(['assetId' => $assetIds, 'dam_meta_key' => 'fieldId', 'dam_meta_value' => $fieldId])
+                ->one();
+            if($assetIdRow != null) {
+                $assetId = $assetIdRow["assetId"];
+            }
+        } else if (count($elementRows) == 1) {
+            $assetId = $elementRows["assetId"];
+        }
+
+        return $assetId;
+    }
+
     private static function _getAssetIdByDamId($damId) {
         $rows = AssetMetadata::find()
-        ->where(['dam_meta_value' => $damId, 'dam_meta_key' => 'damId'])
-        ->all();
+            ->where(['dam_meta_value' => $damId, 'dam_meta_key' => 'damId'])
+            ->all();
 
         $ids = [];
         foreach($rows as $row) {
