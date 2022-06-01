@@ -51,7 +51,7 @@ class DAMAsset extends AssetField {
     public static function hasContentColumn(): bool {
         return true; // Extended class sets this to false
     }
-    
+
     // Pulled from \craft\fields\Assets
     public function getContentGqlType() {
         return [
@@ -62,7 +62,7 @@ class DAMAsset extends AssetField {
             'complexity' => GqlHelper::relatedArgumentComplexity(GqlService::GRAPHQL_COMPLEXITY_EAGER_LOAD),
         ];
     }
-    
+
     public function getInputHtml($value, ElementInterface $element = null): string {
         // Get our id and namespace
         $id = Craft::$app->getView()->formatInputId($this->handle);
@@ -75,21 +75,28 @@ class DAMAsset extends AssetField {
             'value' => $value,
             'fieldId' => $this->id,
             'elementId' => $element->id,
-            'id' => $id,
+	    'id' => $id,
+	    'element' => Json::encode($element),
             'namespacedId' => $namespacedId,
         ];
+	reset($element);
+	try {
+	
+	
+        if($element->damAsset != null) {
+	    $assetId = $this->getDamAssetId($element->id);
 
-        if(array_key_exists("damAsset", $element) && $element->damAsset != null) {
-            $assetId = $this->getDamAssetId($element->id);
-
-            if($assetId != null) {
+	    if($assetId != null) {
+		$assetId = $assetId[0];
                 $metadata = $this->getAssetMetadataByAssetId($assetId);
-
-                if($metadata != null && count($metadata) > 0) {
+		if($metadata != null && count($metadata) > 0) {
                     $templateVals['assetId'] = $assetId;
                 }
             }
-        }
+	}
+	} catch(Exception $e) {
+	    Craft::info($e, "error");
+	}
 
         if(array_key_exists("thumbnailUrl", $metadata)) {
             $templateVals['thumbnailUrl'] = $metadata["thumbnailUrl"];
@@ -101,19 +108,25 @@ class DAMAsset extends AssetField {
     public static function getDamAssetId($elementId) {
         // $db = Craft::$app->getDb();
         $field = Craft::$app->fields->getFieldByHandle("damAsset");
-        $col_name = ElementHelper::fieldColumnFromField($field);
+	$col_name = ElementHelper::fieldColumnFromField($field);
+
+	Craft::info("about to log col_name", "pawptart");
+	Craft::info($col_name, "pawptart");
 
         $damAssetId = (new Query())
                 ->select([$col_name])
                 ->from([Table::CONTENT])
                 ->where(Db::parseParam('elementId', $elementId))
-                ->column();
+		->column();
+
+	Craft::info("about to log damAssetId", "pawptart");
+	Craft::info(Json::encode($damAssetId), "pawptart");
 
         return $damAssetId;
     }
 
     public static function getAssetMetadataByAssetId($assetId) {
-        $rows = AssetMetadata::find()
+	$rows = AssetMetadata::find()
         ->where(['"assetId"' => $assetId])
         ->all();
 
@@ -133,5 +146,4 @@ class DAMAsset extends AssetField {
         }
         return $res;
     }
-
 }

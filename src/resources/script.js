@@ -34,7 +34,7 @@ $("#fields-remove-dam-asset").click(function(e) {
         dataType:"json", 
         data:{ 
             "elementId": elementId,
-            "fieldId": fieldId
+	    "fieldId": fieldId	
         }, 
         success:function(data){
             let res = JSON.parse(data);
