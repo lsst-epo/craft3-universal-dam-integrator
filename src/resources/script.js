@@ -33,7 +33,8 @@ $("#fields-remove-dam-asset").click(function(e) {
         url: "/universal-dam-integrator/dam-asset-removal", 
         dataType:"json", 
         data:{ 
-            "elementId": elementId
+            "elementId": elementId,
+            "fieldId": fieldId
         }, 
         success:function(data){
             let res = JSON.parse(data);

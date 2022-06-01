@@ -43,7 +43,7 @@ class Assets extends Component
         return $vols;
     }
 
-    public function saveDamAsset($damId) {
+    public function saveDamAsset($damId, $elementId = null, $fieldId = null) {
         // Ensure settings are saved before attempting any requests
         if(isset(\rosas\dam\Plugin::getInstance()->getSettings()->retrieveAssetMetadataEndpoint) &&
            isset(\rosas\dam\Plugin::getInstance()->getSettings()->authEndpoint) &&
@@ -53,6 +53,11 @@ class Assets extends Component
                 $this->authToken = $this->getAuthToken();
                 if($this->authToken != null && !empty($this->authToken)) {
                     $this->assetMetadata = $this->getAssetMetadata($damId);
+
+                    // Add the IDs used for backend organization to the metadata for later insertion into the plugin table
+                    $this->assetMetadata["epo_etc"]["elementId"] = $elementId;
+                    $this->assetMetadata["epo_etc"]["fieldId"] = $fieldId;
+
                     if(in_array('errorMessage', $this->assetMetadata)) {
                         return [
                             "status" => "error",
