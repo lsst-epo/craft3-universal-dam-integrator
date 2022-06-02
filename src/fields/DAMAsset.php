@@ -79,21 +79,19 @@ class DAMAsset extends AssetField {
 	    'element' => Json::encode($element),
             'namespacedId' => $namespacedId,
         ];
-	reset($element);
-	try {
-	
-	
-        if($element->damAsset != null) {
-	    $assetId = $this->getDamAssetId($element->id);
 
-	    if($assetId != null) {
-		$assetId = $assetId[0];
-                $metadata = $this->getAssetMetadataByAssetId($assetId);
-		if($metadata != null && count($metadata) > 0) {
+	try {
+        if($element->damAsset != null) {
+            $assetId = $this->getDamAssetId($element->id);
+
+            if($assetId != null) {
+            $assetId = $assetId[0];
+            $metadata = $this->getAssetMetadataByAssetId($assetId);
+		    if($metadata != null && count($metadata) > 0) {
                     $templateVals['assetId'] = $assetId;
                 }
             }
-	}
+	    }
 	} catch(Exception $e) {
 	    Craft::info($e, "error");
 	}
@@ -106,21 +104,14 @@ class DAMAsset extends AssetField {
     }
 
     public static function getDamAssetId($elementId) {
-        // $db = Craft::$app->getDb();
         $field = Craft::$app->fields->getFieldByHandle("damAsset");
-	$col_name = ElementHelper::fieldColumnFromField($field);
-
-	Craft::info("about to log col_name", "pawptart");
-	Craft::info($col_name, "pawptart");
+	    $col_name = ElementHelper::fieldColumnFromField($field);
 
         $damAssetId = (new Query())
                 ->select([$col_name])
                 ->from([Table::CONTENT])
                 ->where(Db::parseParam('elementId', $elementId))
 		->column();
-
-	Craft::info("about to log damAssetId", "pawptart");
-	Craft::info(Json::encode($damAssetId), "pawptart");
 
         return $damAssetId;
     }
@@ -135,7 +126,6 @@ class DAMAsset extends AssetField {
         foreach($rows as $row) {
             if($currentId != intval(str_replace('"', '', $row['assetId']))) {
                 $currentId = intval(str_replace('"', '', $row['assetId']));
-                // array_push($res, [$currentId => []]);
                 $res["assetId"] = $currentId;
                 $res[$row["dam_meta_key"]] = $row["dam_meta_value"];
             } else {
