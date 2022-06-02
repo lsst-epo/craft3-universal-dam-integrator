@@ -4,7 +4,7 @@ namespace rosas\dam\gql\interfaces;
 
 use Craft;
 use GraphQL\Type\Definition\Type;
-// use craft\gql\interfaces\Element as ElementInterface;
+use craft\gql\interfaces\Element as ElementInterface;
 use craft\gql\interfaces\elements\Asset as AssetInterface;
 use craft\gql\TypeManager;
 use craft\gql\GqlEntityRegistry;
@@ -17,6 +17,7 @@ use rosas\dam\elements\Asset;
 use rosas\dam\models\Metadata;
 
 class DAMAssetInterface extends AssetInterface {
+//class DAMAssetInterface extends ElementInterface {
 
     /**
      * @inheritdoc
@@ -24,12 +25,15 @@ class DAMAssetInterface extends AssetInterface {
     public static function getType($fields = null): Type
     {
         if ($type = GqlEntityRegistry::getEntity(self::class)) {
-            return $type;
+	    Craft::info("About to log type:", "snarf");
+    	    Craft::info($type, "snarf");	    
+	    return $type;
         }
 
         $type = GqlEntityRegistry::createEntity(self::class, new InterfaceType([
-            'name' => static::getName(),
-            'fields' => self::class . '::getFieldDefinitions',
+            //'name' => static::getName(),
+	    'name' => 'DAMAssetType',	
+	    'fields' => self::class . '::getFieldDefinitions',
             'description' => 'This is the interface implemented by all assets.',
             'resolveType' => function($value) {
                 return GqlEntityRegistry::getEntity(DAMAssetGenerator::getName());
@@ -37,6 +41,9 @@ class DAMAssetInterface extends AssetInterface {
         ]));
 
         DAMAssetGenerator::generateTypes();
+	
+	Craft::info("About to log type in second place", "snarf");
+	Craft::info($type, "snarf");
 
         return $type;
     }

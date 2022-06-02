@@ -287,7 +287,7 @@ class DAMAssetQuery extends ElementQuery {
         $this->query->innerJoin(['volumeFolders' => Table::VOLUMEFOLDERS], '[[volumeFolders.id]] = [[assets.folderId]]');
 
         // Join to custom universaldamintegrator_asset_metadata table
-        //$this->subQuery->innerJoin(['asset_metadata' => 'universaldamintegrator_asset_metadata'], '[[asset_metadata.assetId]] = [[assets.==id]]');
+        // $this->subQuery->innerJoin(['asset_metadata' => 'universaldamintegrator_asset_metadata'], '[[asset_metadata.assetId]] = [[assets.==id]]');
         // previously innerJoin
         $this->query->leftJoin(['asset_metadata' => 'universaldamintegrator_asset_metadata'], '[[asset_metadata.assetId]] = [[assets.id]]');
         

@@ -86,6 +86,8 @@ class Elements extends ElementsService {
      */
     public function saveElement(ElementInterface $element, bool $runValidation = true, bool $propagate = true, bool $updateSearchIndex = null, $assetMetadata = null): bool
     {
+        Craft::info("maddie - inside saveElement()", "rosas");
+        Craft::info("maddie - height : " . $element->getHeight() . ", width : " . $element->getWidth(), "rosas");
         // Force propagation for new elements
         $propagate = !$element->id || $propagate;
 

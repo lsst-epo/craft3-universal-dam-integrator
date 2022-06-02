@@ -22,7 +22,6 @@ use craft\services\Fields;
 
 class Plugin extends \craft\base\Plugin
 {
-    // added asset extends
     public static $plugin;
 
     public $hasCpSettings = true;

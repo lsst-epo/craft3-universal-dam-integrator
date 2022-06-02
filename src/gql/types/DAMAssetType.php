@@ -4,26 +4,23 @@ namespace rosas\dam\gql\types;
 
 use Craft;
 use rosas\dam\gql\interfaces\DAMAssetInterface;
-use rosas\dam\fields\DAMAsset;
-use craft\gql\base\ObjectType;
+use craft\gql\types\elements\Asset as AssetType;
 use craft\helpers\Json;
-use GraphQL\Type\Definition\ResolveInfo;
-use rosas\dam\db\AssetMetadata;
+use craft\gql\base\ObjectType;
 
-/**
- * Class SeomaticType
- *
- * @author    nystudio107
- * @package   Seomatic
- * @since     3.2.8
- */
-class DAMAssetType extends ObjectType {
+use GraphQL\Type\Definition\ResolveInfo;
+
+class DAMAssetType extends AssetType {
+//class DAMAssetType extends ObjectType {
     /**
      * @inheritdoc
      */
     public function __construct(array $config) {
         $config['interfaces'] = [
-            DAMAssetInterface::getType(),
+		DAMAssetInterface::getType(),
+		"calloutImages_Asset",
+		"cantoDam_Asset",
+		"DAMAssetType"
         ];
 
         parent::__construct($config);
@@ -33,54 +30,15 @@ class DAMAssetType extends ObjectType {
      * @inheritdoc
      */
     protected function resolve($source, $arguments, $context, ResolveInfo $resolveInfo) {
-	Craft::info("about to log source", "schneez");
-	Craft::info(Json::encode($source), "schneez");
-	Craft::info("about to log resolveInfo->fieldName", "schneez");
-	Craft::info($resolveInfo->fieldName, "schneez");
+	Craft::info("About to log source", "sizzle");
+	Craft::info(Json::encode($source), "sizzle");
+	Craft::info("About to log resolveInfo", "sizzle");
+	Craft::info(Json::encode($resolveInfo), "sizzle");
 	if(array_key_exists($resolveInfo->fieldName, $source)) {
 	    return $source[$resolveInfo->fieldName];
-	} else if($resolveInfo->fieldName == "damMetadata"){
-	    Craft::info("field not found! BUT field IS damAsset", "schneez");
-	    $metadata = $this->getAssetMetadataByAssetId($source->id);
-	    Craft::info("logging metadata:", "schneez");
-	    Craft::info(Json::encode($metadata), "schneez");
-            return $metadata;
 	} else {
-		Craft::info("field not found AND it is not damAsset!", "schneez");
-
-	    try {
-		$resolvedValue = $source[$resolveInfo->fieldName];
-		return $resolvedValue;
-	    } catch (Exception $e) {
-	        return null;
-	    }
+	    return [];
 	}
-
-    }
-
-    public static function getAssetMetadataByAssetId($assetId) {
-        $rows = AssetMetadata::find()
-        ->where(['"assetId"' => $assetId])
-        ->all();
-
-        $res = [];
-        $currentId = 0;
-        foreach($rows as $row) {
-            //if($currentId != intval(str_replace('"', '', $row['assetId']))) {
-                //$currentId = intval(str_replace('"', '', $row['assetId']));
-                // array_push($res, [$currentId => []]);
-		//$res["assetId"] = $currentId;
-		$metadataRow = [];
-                $metadataRow["metadataKey"] = $row["dam_meta_key"];
-		$metadataRow["metadataValue"] = $row["dam_meta_value"];
-		array_push($res, $metadataRow);
-            //} else {
-                //if($currentId != 0) {
-                    //$res["metadataKey"] = $row["dam_meta_key"];
-                    //$res["metadataValue"] = $row["dam_meta_value"];
-                //}
-            //}
-        }
-        return $res;
+        //return $source[$resolveInfo->fieldName];
     }
 }

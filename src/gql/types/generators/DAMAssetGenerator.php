@@ -48,7 +48,8 @@ class DAMAssetGenerator implements GeneratorInterface
         TypeLoader::registerType($typeName, function () use ($damAssetType) {
             return $damAssetType;
         });
-
+	Craft::info("about to log gqlTypes", "snarf");
+	Craft::info($gqlTypes, "snarf");
         return $gqlTypes;
     }
 

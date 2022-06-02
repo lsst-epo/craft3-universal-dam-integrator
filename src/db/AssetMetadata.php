@@ -58,19 +58,8 @@ class AssetMetadata extends ActiveRecord{
                     ->execute();
             }
 
-	}
 
-	// Lastly, insert the backend organization metadata
-        foreach($assetMetadata["epo_etc"] as $key => $value) {
-            $db->createCommand()
-            ->insert('{{%universaldamintegrator_asset_metadata}}',  [
-                'assetId' => $id,
-                'dam_meta_key' => $key,
-                'dam_meta_value' => $value
-            ])
-            ->execute();
         }
-
     }
 
 }

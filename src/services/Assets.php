@@ -43,7 +43,7 @@ class Assets extends Component
         return $vols;
     }
 
-    public function saveDamAsset($damId, $elementId, $fieldId) {
+    public function saveDamAsset($damId) {
         // Ensure settings are saved before attempting any requests
         if(isset(\rosas\dam\Plugin::getInstance()->getSettings()->retrieveAssetMetadataEndpoint) &&
            isset(\rosas\dam\Plugin::getInstance()->getSettings()->authEndpoint) &&
@@ -52,10 +52,7 @@ class Assets extends Component
             try {
                 $this->authToken = $this->getAuthToken();
                 if($this->authToken != null && !empty($this->authToken)) {
-		    $this->assetMetadata = $this->getAssetMetadata($damId);
-
-		    $this->assetMetadata["epo_etc"]["elementId"] = $elementId;
-                    $this->assetMetadata["epo_etc"]["fieldId"] = $fieldId;
+                    $this->assetMetadata = $this->getAssetMetadata($damId);
                     if(in_array('errorMessage', $this->assetMetadata)) {
                         return [
                             "status" => "error",
@@ -147,7 +144,6 @@ class Assets extends Component
                             ->where("name = :name", [ ":name" => $damVolume["name"]])
                             ->one();
 
-	//$newAsset->title = "rosas";
         $newAsset = new Asset();
         $newAsset->avoidFilenameConflicts = true;
         $newAsset->setScenario(Asset::SCENARIO_CREATE);
@@ -174,9 +170,6 @@ class Assets extends Component
         $elements = new Elements();
         Craft::info("About to save element", "UDAMI");
 
-	Craft::info("about to log assetMetadata", "potter");
-	Craft::info(Json::encode($this->assetMetadata), "potter");
-	
         $success = $elements->saveElement($newAsset, false, true, true, $this->assetMetadata);
 
         if($success) {
