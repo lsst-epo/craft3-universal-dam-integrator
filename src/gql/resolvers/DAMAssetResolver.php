@@ -14,7 +14,17 @@ use craft\helpers\Gql as GqlHelper;
 class DAMAssetResolver extends AssetResolver {
 
     /**
-     * Copied from  craft\gql\resolvers\elements\Asset;
+     * @inheritdoc
+     */
+    public static function resolve($source, array $arguments, $context, ResolveInfo $resolveInfo)
+    {
+        $query = self::prepareElementQuery($source, $arguments, $context, $resolveInfo);
+        $value = $query instanceof ElementQuery ? $query->all() : $query;
+        return GqlHelper::applyDirectives($source, $resolveInfo, $value);
+    }
+
+    /**
+     *  Based on craft\gql\resolvers\elements\Asset;
      */
     public static function prepareQuery($source, array $arguments, $fieldName = null)
     {
@@ -23,7 +33,15 @@ class DAMAssetResolver extends AssetResolver {
             $query = AssetElement::find(); // From this plugin's overriden Asset class
             // If not, get the prepared element query
         } else {
-            $query = $source->$fieldName;
+            $elementRow = AssetMetadata::find()
+                ->where(["dam_meta_value" => $source->id, "dam_meta_key" => 'elementId'])
+                ->one();
+            if($elementRow != null) {
+                $query = craft\elements\Asset::find($elementRow->assetId);
+                $query->id = $elementRow->assetId;
+            } else {
+                $query = $source->$fieldName;
+            }
         }
 
         // If it's preloaded, it's preloaded.
@@ -39,3 +57,4 @@ class DAMAssetResolver extends AssetResolver {
     }
 
 }
+

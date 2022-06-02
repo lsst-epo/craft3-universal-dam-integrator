@@ -33,24 +33,15 @@ class DAMAssetType extends ObjectType {
      * @inheritdoc
      */
     protected function resolve($source, $arguments, $context, ResolveInfo $resolveInfo) {
-	Craft::info("about to log source", "schneez");
-	Craft::info(Json::encode($source), "schneez");
-	Craft::info("about to log resolveInfo->fieldName", "schneez");
-	Craft::info($resolveInfo->fieldName, "schneez");
-	if(array_key_exists($resolveInfo->fieldName, $source)) {
-	    return $source[$resolveInfo->fieldName];
-	} else if($resolveInfo->fieldName == "damMetadata"){
-	    Craft::info("field not found! BUT field IS damAsset", "schneez");
-	    $metadata = $this->getAssetMetadataByAssetId($source->id);
-	    Craft::info("logging metadata:", "schneez");
-	    Craft::info(Json::encode($metadata), "schneez");
+        if(array_key_exists($resolveInfo->fieldName, $source)) {
+            return $source[$resolveInfo->fieldName];
+        } else if($resolveInfo->fieldName == "damMetadata"){
+	        $metadata = $this->getAssetMetadataByAssetId($source->id);
             return $metadata;
 	} else {
-		Craft::info("field not found AND it is not damAsset!", "schneez");
-
 	    try {
-		$resolvedValue = $source[$resolveInfo->fieldName];
-		return $resolvedValue;
+            $resolvedValue = $source[$resolveInfo->fieldName];
+            return $resolvedValue;
 	    } catch (Exception $e) {
 	        return null;
 	    }
@@ -66,20 +57,10 @@ class DAMAssetType extends ObjectType {
         $res = [];
         $currentId = 0;
         foreach($rows as $row) {
-            //if($currentId != intval(str_replace('"', '', $row['assetId']))) {
-                //$currentId = intval(str_replace('"', '', $row['assetId']));
-                // array_push($res, [$currentId => []]);
-		//$res["assetId"] = $currentId;
-		$metadataRow = [];
-                $metadataRow["metadataKey"] = $row["dam_meta_key"];
-		$metadataRow["metadataValue"] = $row["dam_meta_value"];
-		array_push($res, $metadataRow);
-            //} else {
-                //if($currentId != 0) {
-                    //$res["metadataKey"] = $row["dam_meta_key"];
-                    //$res["metadataValue"] = $row["dam_meta_value"];
-                //}
-            //}
+		    $metadataRow = [];
+            $metadataRow["metadataKey"] = $row["dam_meta_key"];
+            $metadataRow["metadataValue"] = $row["dam_meta_value"];
+            array_push($res, $metadataRow);
         }
         return $res;
     }
