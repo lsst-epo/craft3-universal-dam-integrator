@@ -2,10 +2,6 @@
 
 namespace rosas\dam\gql\types\generators;
 
-// use nystudio107\seomatic\gql\arguments\SeomaticArguments;
-// use nystudio107\seomatic\gql\interfaces\SeomaticInterface;
-// use nystudio107\seomatic\gql\types\SeomaticType;
-
 use Craft;
 use rosas\dam\gql\interfaces\DAMAssetInterface;
 use rosas\dam\gql\types\DAMAssetType;
