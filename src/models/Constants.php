@@ -11,6 +11,9 @@ class Constants {
         "titleSpanish" => ["additional", "Title **ES**"],
         "titleEnglish" => ["additional", "Title **EN**"],
         "thumbnailUrl" => ["url", "directUrlPreview"],
+        "highResJpegUrl" => ["url", "HighJPG"],
+        "pngUrl" => ["url", "PNG"],
+        "directImageUrl" => ["url", "directUrlOriginal"],
         "damId" => ["id"],
         "description" => ["description"]
     ];
