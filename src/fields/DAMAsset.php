@@ -87,12 +87,18 @@ class DAMAsset extends AssetField {
                 Craft::info("About to compare assetId", "UDAMI");
                 Craft::info($assetId, "UDAMI");
                 Craft::info(Json::encode($assetId), "UDAMI");
-                if($assetId != null && $assetId != []) {
-                    $metadata = $this->getAssetMetadataByAssetId($assetId);
-                    if($metadata != null && count($metadata) > 0) {
-                        $templateVals['assetId'] = $assetId;
+                if($assetId != null && is_array($assetId)) {
+                    $assetId = $assetId[0];
+                    Craft::info("about to log assetId inside of first IF", "UDAMI");
+                    Craft::info($assetId, "UDAMI");
+                    if(is_int($assetId)) {
+                        $metadata = $this->getAssetMetadataByAssetId($assetId);
+                        if($metadata != null && count($metadata) > 0) {
+                            $templateVals['assetId'] = $assetId;
+                        }
                     }
                 }
+                
             }
         } catch(Exception $e) {
             Craft::info($e, "error");
