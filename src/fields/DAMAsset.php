@@ -92,10 +92,13 @@ class DAMAsset extends AssetField {
                     Craft::info("about to log assetId inside of first IF", "UDAMI");
                     Craft::info($assetId, "UDAMI");
                     if(is_int($assetId)) {
+                        Craft::info("inside of the second IF!", "UDAMI");
                         $metadata = $this->getAssetMetadataByAssetId($assetId);
-                        if($metadata != null && count($metadata) > 0) {
-                            $templateVals['assetId'] = $assetId;
-                        }
+                        Craft::info("about to log metadata", "UDAMI");
+                        Craft::info(Json::encode($metadata), "UDAMI");
+                        $templateVals['assetId'] = $assetId;
+                    } else {
+                        Craft::info("did NOT pass second IF!!!", "UDAMI");
                     }
                 }
                 
@@ -125,9 +128,12 @@ class DAMAsset extends AssetField {
     }
 
     public static function getAssetMetadataByAssetId($assetId) {
-	$rows = AssetMetadata::find()
-        ->where(['"assetId"' => $assetId])
-        ->all();
+        $rows = AssetMetadata::find()
+            ->where(['"assetId"' => $assetId])
+            ->all();
+
+        Craft::info("inside of getAssetMEtadataByAssetId", "UDAMI2");
+        Craft::info(Json::encode($rows), "UDAMI2");
 
         $res = [];
         $currentId = 0;
@@ -142,6 +148,9 @@ class DAMAsset extends AssetField {
                 }
             }
         }
+
+        Craft::info("about to log res", "UDAMI2");
+        Craft::info(Json::encode($res), "UDAMI2");
         return $res;
     }
 }
