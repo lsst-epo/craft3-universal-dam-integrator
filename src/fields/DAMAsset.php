@@ -3,16 +3,13 @@
 namespace rosas\dam\fields;
 
 use Craft;
-// use craft\base\Field;
 use craft\fields\Assets as AssetField;
 use craft\base\ElementInterface;
 use craft\helpers\Json;
 use rosas\dam\controllers\AssetSyncController;
 use rosas\dam\db\AssetMetadata;
 use craft\gql\arguments\elements\Asset as AssetArguments;
-//use craft\gql\interfaces\elements\Asset as AssetInterface;
 use rosas\dam\gql\interfaces\DAMAssetInterface as AssetInterface;
-//use craft\gql\resolvers\elements\Asset as AssetResolver;
 use rosas\dam\gql\resolvers\DAMAssetResolver as AssetResolver;
 use craft\helpers\Gql as GqlHelper;
 use craft\services\Gql as GqlService;
@@ -83,25 +80,13 @@ class DAMAsset extends AssetField {
         try {
             if($element->damAsset != null) {
                 $assetId = $this->getDamAssetId($element->id);
-
-                Craft::info("About to compare assetId", "UDAMI");
-                Craft::info($assetId, "UDAMI");
-                Craft::info(Json::encode($assetId), "UDAMI");
                 if($assetId != null && is_array($assetId) && count($assetId) > 0) {
                     $assetId = $assetId[0];
-                    Craft::info("about to log assetId inside of first IF", "UDAMI");
-                    Craft::info($assetId, "UDAMI");
                     if($assetId != [] && $assetId != "[]" && is_int(intval($assetId))) { // value will likely come back as string, but may come back as "[]"
-                        Craft::info("inside of the second IF!", "UDAMI");
                         $metadata = $this->getAssetMetadataByAssetId($assetId);
-                        Craft::info("about to log metadata", "UDAMI");
-                        Craft::info(Json::encode($metadata), "UDAMI");
                         $templateVals['assetId'] = $assetId;
-                    } else {
-                        Craft::info("did NOT pass second IF!!!", "UDAMI");
-                    }
+                    } 
                 }
-                
             }
         } catch(Exception $e) {
             Craft::info($e, "error");
@@ -132,9 +117,6 @@ class DAMAsset extends AssetField {
             ->where(['"assetId"' => $assetId])
             ->all();
 
-        Craft::info("inside of getAssetMEtadataByAssetId", "UDAMI2");
-        Craft::info(Json::encode($rows), "UDAMI2");
-
         $res = [];
         $currentId = 0;
         foreach($rows as $row) {
@@ -148,9 +130,6 @@ class DAMAsset extends AssetField {
                 }
             }
         }
-
-        Craft::info("about to log res", "UDAMI2");
-        Craft::info(Json::encode($res), "UDAMI2");
         return $res;
     }
 }
