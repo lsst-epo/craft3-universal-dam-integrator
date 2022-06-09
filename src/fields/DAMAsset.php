@@ -91,7 +91,7 @@ class DAMAsset extends AssetField {
                     $assetId = $assetId[0];
                     Craft::info("about to log assetId inside of first IF", "UDAMI");
                     Craft::info($assetId, "UDAMI");
-                    if(is_int(intval($assetId))) { // value will likely come back as string, but may come back as "[]"
+                    if($assetId != [] && $assetId != "[]" && is_int(intval($assetId))) { // value will likely come back as string, but may come back as "[]"
                         Craft::info("inside of the second IF!", "UDAMI");
                         $metadata = $this->getAssetMetadataByAssetId($assetId);
                         Craft::info("about to log metadata", "UDAMI");
