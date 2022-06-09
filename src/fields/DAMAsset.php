@@ -75,26 +75,26 @@ class DAMAsset extends AssetField {
             'value' => $value,
             'fieldId' => $this->id,
             'elementId' => $element->id,
-	    'id' => $id,
-	    'element' => Json::encode($element),
+            'id' => $id,
+            'element' => Json::encode($element),
             'namespacedId' => $namespacedId,
         ];
 
-	try {
-        if($element->damAsset != null) {
-            $assetId = $this->getDamAssetId($element->id);
+        try {
+            if($element->damAsset != null) {
+                $assetId = $this->getDamAssetId($element->id);
 
-            if($assetId != null) {
-            $assetId = $assetId[0];
-            $metadata = $this->getAssetMetadataByAssetId($assetId);
-		    if($metadata != null && count($metadata) > 0) {
-                    $templateVals['assetId'] = $assetId;
+                if($assetId != null && $assetId != []) {
+                    $assetId = $assetId[0];
+                    $metadata = $this->getAssetMetadataByAssetId($assetId);
+                    if($metadata != null && count($metadata) > 0) {
+                        $templateVals['assetId'] = $assetId;
+                    }
                 }
             }
-	    }
-	} catch(Exception $e) {
-	    Craft::info($e, "error");
-	}
+        } catch(Exception $e) {
+            Craft::info($e, "error");
+        }
 
         if(array_key_exists("thumbnailUrl", $metadata)) {
             $templateVals['thumbnailUrl'] = $metadata["thumbnailUrl"];
