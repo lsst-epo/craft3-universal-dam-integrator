@@ -84,8 +84,10 @@ class DAMAsset extends AssetField {
             if($element->damAsset != null) {
                 $assetId = $this->getDamAssetId($element->id);
 
+                Craft::info("About to compare assetId", "UDAMI");
+                Craft::info($assetId, "UDAMI");
+                Craft::info(Json::encode($assetId), "UDAMI");
                 if($assetId != null && $assetId != []) {
-                    $assetId = $assetId[0];
                     $metadata = $this->getAssetMetadataByAssetId($assetId);
                     if($metadata != null && count($metadata) > 0) {
                         $templateVals['assetId'] = $assetId;
