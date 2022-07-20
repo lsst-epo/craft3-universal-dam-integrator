@@ -78,7 +78,7 @@ class DAMAsset extends AssetField {
         ];
 
         try {
-            if($element->damAsset != null) {
+            if(property_exists($element, "damAsset") && $element->damAsset != null) {
                 $assetId = $this->getDamAssetId($element->id);
                 if($assetId != null && is_array($assetId) && count($assetId) > 0) {
                     $assetId = $assetId[0];

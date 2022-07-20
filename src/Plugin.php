@@ -19,6 +19,8 @@ use craft\services\Gql;
 use craft\events\RegisterGqlQueriesEvent;
 use craft\web\UrlManager;
 use craft\services\Fields;
+use craft\events\RegisterUserPermissionsEvent;
+use craft\services\UserPermissions;
 
 class Plugin extends \craft\base\Plugin
 {
@@ -43,6 +45,19 @@ class Plugin extends \craft\base\Plugin
         $this->setComponents([
             'assets' => \rosas\dam\services\Assets::class,
         ]);
+
+        // Add permission for Editors
+        Event::on(
+            UserPermissions::class,
+            UserPermissions::EVENT_REGISTER_PERMISSIONS,
+            function(RegisterUserPermissionsEvent $event) {
+                $event->permissions['Editor'] = [
+                    'accessPlugin-universal-dam-integrator' => [
+                        'label' => 'Use DAM Integration Plugin',
+                    ],
+                ];
+            }
+        );
         
         // Add a tag for the settings page for testing services
         Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function(Event $e) {
